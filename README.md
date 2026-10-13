@@ -37,6 +37,35 @@ The application brings patient administration, clinical workflows, billing, and 
 
 Permissions are enforced on the server; hiding navigation items alone is not considered an access control.
 
+## Application Screenshots
+
+### Administrator Dashboard
+![Administrator Dashboard](docs/screenshots/02_dashboard.png)
+
+### Login and Authentication
+![Login Page](docs/screenshots/01_login.png)
+
+### Patient Management
+![Patient Management](docs/screenshots/03_patients.png)
+
+### Admission Management
+![Admission Management](docs/screenshots/04_admissions.png)
+
+### Treatment Management
+![Treatment Management](docs/screenshots/05_treatments.png)
+
+### Payment Management
+![Payment Management](docs/screenshots/06_payments.png)
+
+### Financial and Operational Analytics
+![Financial and Operational Analytics](docs/screenshots/07_reports.png)
+
+### Role-Based Access Control
+![Role-Based Access Control](docs/screenshots/08_role_based_access.png)
+
+### Doctor Dashboard
+![Doctor Dashboard](docs/screenshots/09_doctor_dashboard.png)
+
 ## Project Structure
 
 ```
