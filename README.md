@@ -65,7 +65,7 @@ Permissions are enforced on the server; hiding navigation items alone is not con
 
 ### Doctor Dashboard
 
-![Doctor Dashboard](docs/screenshots/09_doctor_dashboard.png)
+![Doctor Dashboard](docs/screenshots/09_doctor_dashboard.PNG)
 
 ## Project Structure
 
