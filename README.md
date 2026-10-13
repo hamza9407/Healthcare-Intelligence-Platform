@@ -39,21 +39,27 @@ Permissions are enforced on the server; hiding navigation items alone is not con
 
 ## Project Structure
 
-```text
+```
 Healthcare_Intelligence_Platform/
-â”œâ”€â”€ app/
-â”‚   â”œâ”€â”€ routes/
-â”‚   â”‚   â”œâ”€â”€ auth.py
-â”‚   â”‚   â””â”€â”€ main.py
-â”‚   â”œâ”€â”€ static/
-â”‚   â”œâ”€â”€ templates/
-â”‚   â”œâ”€â”€ __init__.py
-â”‚   â”œâ”€â”€ models.py
-â”‚   â””â”€â”€ permissions.py
-â”œâ”€â”€ run.py
-â”œâ”€â”€ requirements.txt
-â”œâ”€â”€ .gitignore
-â””â”€â”€ README.md
+|
++-- app/
+|   +-- routes/
+|   |   +-- __init__.py
+|   |   +-- auth.py
+|   |   +-- main.py
+|   +-- static/
+|   |   +-- css/
+|   |   |   +-- style.css
+|   |   +-- js/
+|   |       +-- main.js
+|   +-- templates/
+|   +-- __init__.py
+|   +-- models.py
+|   +-- permissions.py
++-- run.py
++-- requirements.txt
++-- .gitignore
++-- README.md
 ```
 
 This shows the principal verified components; additional files and folders may exist in the local project.
