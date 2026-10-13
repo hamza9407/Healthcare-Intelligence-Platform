@@ -64,6 +64,7 @@ Permissions are enforced on the server; hiding navigation items alone is not con
 ![Role-Based Access Control](docs/screenshots/08_role_based_access.png)
 
 ### Doctor Dashboard
+
 ![Doctor Dashboard](docs/screenshots/09_doctor_dashboard.png)
 
 ## Project Structure
