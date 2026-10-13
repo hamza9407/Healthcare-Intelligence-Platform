@@ -145,12 +145,14 @@ Open `http://127.0.0.1:5000/` in your browser.
 
 ## Database Design
 
-The application uses related tables for patients, doctors, departments, diseases, admissions, treatments, and payments. Payment auditing also uses:
+The application uses related tables for patients, doctors, departments, diseases, admissions, treatments, and payments.
 
-- `payment_transaction` â€” records individual payment installments.
-- `payment_opening_balance` â€” preserves historical collected amounts from before transaction-level tracking was introduced.
+Payment auditing also uses:
 
-Payment reconciliation checks that recorded collections equal opening balances plus transaction totals.
+- `payment_transaction` - Records individual payment installments.
+- `payment_opening_balance` - Preserves historical collected amounts from before transaction-level tracking was introduced.
+
+Payment reconciliation verifies that recorded collections equal opening balances plus transaction totals.
 
 ## Testing Summary
 
@@ -165,15 +167,6 @@ The project has undergone manual checks covering:
 
 These checks demonstrate tested behavior, **not a comprehensive independent security audit**.
 
-## Screenshots
-
-Screenshots will be added after final capture using synthetic/demo data.
-
-<!-- Example once screenshots are available:
-![Administrator dashboard](docs/screenshots/dashboard.png)
-![Patient management](docs/screenshots/patients.png)
-![Payment history](docs/screenshots/payments.png)
--->
 
 ## Demonstration
 
