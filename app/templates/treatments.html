@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+
+{% block title %}Treatments | Healthcare Intelligence Platform{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-2 px-md-3">
+    <!-- Page header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Treatment Management</h2>
+            <p class="text-muted mb-0">View and manage hospital treatment records.</p>
+        </div>
+        {% if current_user.role in ['administrator', 'doctor'] %}
+        <a href="{{ url_for('main.admissions') }}" class="btn btn-primary align-self-start align-self-md-center">
+            <i class="bi bi-plus-circle me-1"></i> Add Treatment (Choose Admission)
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Summary cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center py-4">
+                    <small class="text-muted d-block mb-2">Total Treatments</small>
+                    <h3 class="fw-bold mb-0">{{ treatment_stats.TotalTreatments or 0 }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center py-4">
+                    <small class="text-muted d-block mb-2">Patients Treated</small>
+                    <h3 class="fw-bold mb-0">{{ treatment_stats.PatientsTreated or 0 }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center py-4">
+                    <small class="text-muted d-block mb-2">Under Treatment</small>
+                    <h3 class="fw-bold mb-0">{{ treatment_stats.UnderTreatmentCount or 0 }}</h3>
+                </div>
+            </div>
+        </div>
+        {% if current_user.role in ['administrator', 'receptionist'] %}
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center py-4">
+                    <small class="text-muted d-block mb-2">Total Treatment Cost</small>
+                    <h3 class="fw-bold mb-0 text-nowrap" style="font-size:clamp(1.15rem, 1.6vw, 1.65rem)">
+                        Rs. {{ '{:,.2f}'.format(treatment_stats.TotalTreatmentCost or 0) }}
+                    </h3>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Treatment records -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white border-0 pt-4 px-3 px-md-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <div>
+                    <h5 class="fw-bold mb-1">Treatment Records</h5>
+                    <p class="text-muted mb-0">
+                        Showing <span id="visibleTreatmentCount">{{ treatments|length }}</span>
+                        of <span id="totalTreatmentCount">{{ treatments|length }}</span> records
+                    </p>
+                </div>
+                <div style="max-width: 320px; width: 100%;">
+                    <label for="treatmentSearch" class="visually-hidden">Search treatments</label>
+                    <input type="search" id="treatmentSearch" class="form-control" placeholder="Search treatments...">
+                </div>
+            </div>
+            <div class="row g-3 mt-2 mb-2">
+                <div class="col-12 col-md-4">
+                    <label for="diseaseFilter" class="form-label small text-muted">Disease</label>
+                    <select id="diseaseFilter" class="form-select">
+                        <option value="">All Diseases</option>
+                        {% for disease in treatments | map(attribute='DiseaseName') | select | unique | sort %}
+                        <option value="{{ disease }}">{{ disease }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-12 col-md-4">
+                    <label for="typeFilter" class="form-label small text-muted">Treatment Type</label>
+                    <select id="typeFilter" class="form-select">
+                        <option value="">All Treatment Types</option>
+                        {% for treatment_type in treatments | map(attribute='TreatmentType') | select | unique | sort %}
+                        <option value="{{ treatment_type }}">{{ treatment_type }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-12 col-md-4">
+                    <label for="outcomeFilter" class="form-label small text-muted">Outcome</label>
+                    <select id="outcomeFilter" class="form-select">
+                        <option value="">All Outcomes</option>
+                        {% for outcome in treatments | map(attribute='TreatmentOutcome') | select | unique | sort %}
+                        <option value="{{ outcome }}">{{ outcome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="card-body px-3 px-md-4">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle" id="treatmentTable">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Patient</th>
+                            <th scope="col">Disease</th>
+                            <th scope="col">Doctor</th>
+                            <th scope="col">Treatment</th>
+                            <th scope="col">Medicine / Details</th>
+                            <th scope="col">Outcome</th>
+                            {% if current_user.role in ['administrator', 'receptionist'] %}
+                            <th scope="col">Cost</th>
+                            {% endif %}
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for treatment in treatments %}
+                        <tr class="treatment-row"
+                            data-disease="{{ treatment.DiseaseName or '' }}"
+                            data-type="{{ treatment.TreatmentType or '' }}"
+                            data-outcome="{{ treatment.TreatmentOutcome or '' }}">
+                            <td>#{{ treatment.TreatmentID }}</td>
+                            <td>{{ treatment.TreatmentDate }}</td>
+                            <td>
+                                <a class="text-decoration-none fw-semibold"
+                                   href="{{ url_for('main.patient_details', patient_id=treatment.PatientID) }}">
+                                    {{ treatment.PatientName }}
+                                </a>
+                            </td>
+                            <td>{{ treatment.DiseaseName or '—' }}</td>
+                            <td>{{ treatment.DoctorName or '—' }}</td>
+                            <td class="fw-semibold">{{ treatment.TreatmentType }}</td>
+                            <td>{{ treatment.MedicineDetails or '—' }}</td>
+                            <td>
+                                {% if treatment.TreatmentOutcome == 'Recovered' %}
+                                <span class="badge bg-success">Recovered</span>
+                                {% elif treatment.TreatmentOutcome == 'Improved' %}
+                                <span class="badge bg-primary">Improved</span>
+                                {% elif treatment.TreatmentOutcome == 'Under Treatment' %}
+                                <span class="badge bg-warning text-dark">Under Treatment</span>
+                                {% elif treatment.TreatmentOutcome %}
+                                <span class="badge bg-secondary">{{ treatment.TreatmentOutcome }}</span>
+                                {% else %}
+                                <span class="text-muted">—</span>
+                                {% endif %}
+                            </td>
+                            {% if current_user.role in ['administrator', 'receptionist'] %}
+                            <td class="fw-semibold text-nowrap">
+                                Rs. {{ '{:,.2f}'.format(treatment.TreatmentCost or 0) }}
+                            </td>
+                            {% endif %}
+                            <td class="text-nowrap">
+                                <a href="{{ url_for('main.treatment_details', treatment_id=treatment.TreatmentID) }}"
+                                   class="btn btn-sm btn-outline-primary" title="View Treatment"
+                                   aria-label="View treatment {{ treatment.TreatmentID }}">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                {# The treatment listing must provide AdmissionStatus before showing this shortcut. #}
+                                {% if current_user.role in ['administrator', 'doctor']
+                                      and treatment.AdmissionStatus is defined
+                                      and treatment.AdmissionStatus == 'Active'
+                                      and treatment.AdmissionID is defined %}
+                                <a href="{{ url_for('main.add_treatment', admission_id=treatment.AdmissionID) }}"
+                                   class="btn btn-sm btn-outline-success ms-1" title="Add Treatment to Admission">
+                                    <i class="bi bi-plus-circle"></i> Add
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="{{ 10 if current_user.role in ['administrator', 'receptionist'] else 9 }}"
+                                class="text-center text-muted py-4">
+                                No treatment records found.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <p id="noFilterResults" class="text-center text-muted py-3 mb-0 d-none">
+                No treatments match the selected filters.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('treatmentSearch');
+    const diseaseFilter = document.getElementById('diseaseFilter');
+    const typeFilter = document.getElementById('typeFilter');
+    const outcomeFilter = document.getElementById('outcomeFilter');
+    const visibleCount = document.getElementById('visibleTreatmentCount');
+    const rows = document.querySelectorAll('#treatmentTable .treatment-row');
+    const emptyFiltered = document.getElementById('noFilterResults');
+
+    function filterTreatments() {
+        const search = searchInput.value.toLowerCase().trim();
+        const disease = diseaseFilter.value.toLowerCase();
+        const type = typeFilter.value.toLowerCase();
+        const outcome = outcomeFilter.value.toLowerCase();
+        let count = 0;
+
+        rows.forEach(function (row) {
+            const matches = row.textContent.toLowerCase().includes(search)
+                && (!disease || row.dataset.disease.toLowerCase() === disease)
+                && (!type || row.dataset.type.toLowerCase() === type)
+                && (!outcome || row.dataset.outcome.toLowerCase() === outcome);
+            row.style.display = matches ? '' : 'none';
+            if (matches) count++;
+        });
+
+        visibleCount.textContent = count;
+        emptyFiltered.classList.toggle('d-none', count !== 0 || rows.length === 0);
+    }
+
+    searchInput.addEventListener('input', filterTreatments);
+    diseaseFilter.addEventListener('change', filterTreatments);
+    typeFilter.addEventListener('change', filterTreatments);
+    outcomeFilter.addEventListener('change', filterTreatments);
+});
+</script>
+{% endblock %}

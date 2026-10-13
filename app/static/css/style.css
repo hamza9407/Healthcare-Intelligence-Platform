@@ -1,0 +1,22 @@
+body {
+    background-color: #f5f7fa;
+    font-family: Arial, sans-serif;
+}
+
+.navbar-brand {
+    letter-spacing: 0.3px;
+}
+
+main {
+    min-height: calc(100vh - 56px);
+}
+
+.card {
+    border-radius: 14px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.08) !important;
+}

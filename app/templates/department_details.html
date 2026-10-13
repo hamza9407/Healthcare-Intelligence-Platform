@@ -1,0 +1,283 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ department.DepartmentName }} | Healthcare Intelligence Platform
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+                Department Profile
+            </h2>
+
+            <p class="text-muted mb-0">
+                Department information and assigned medical staff.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{{ url_for('main.departments') }}"
+            class="btn btn-outline-secondary"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Back to Departments
+        </a>
+
+    </div>
+
+
+    <!-- Department Summary -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex align-items-center">
+
+                <div class="me-4">
+
+                    <div class="fs-1">
+                        <i class="bi bi-building"></i>
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <h3 class="fw-bold mb-1">
+                        {{ department.DepartmentName }}
+                    </h3>
+
+                    <p class="text-muted mb-2">
+                        Department ID: #{{ department.DepartmentID }}
+                    </p>
+
+                    <span class="badge bg-primary">
+
+                        <i class="bi bi-person-badge me-1"></i>
+
+                        {{ doctors|length }}
+
+                        {% if doctors|length == 1 %}
+                            Doctor
+                        {% else %}
+                            Doctors
+                        {% endif %}
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Department Information -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-header bg-white border-0 pt-4 px-4">
+
+            <h5 class="fw-bold mb-0">
+                Department Information
+            </h5>
+
+        </div>
+
+
+        <div class="card-body p-4">
+
+            <div class="row g-4">
+
+
+                <!-- Department Name -->
+                <div class="col-md-4">
+
+                    <small class="text-muted">
+                        Department Name
+                    </small>
+
+                    <p class="fw-semibold mb-0">
+                        {{ department.DepartmentName }}
+                    </p>
+
+                </div>
+
+
+                <!-- Location -->
+                <div class="col-md-4">
+
+                    <small class="text-muted">
+                        Location
+                    </small>
+
+                    <p class="fw-semibold mb-0">
+                        {{ department.Location or "Not provided" }}
+                    </p>
+
+                </div>
+
+
+                <!-- Contact Extension -->
+                <div class="col-md-4">
+
+                    <small class="text-muted">
+                        Contact Extension
+                    </small>
+
+                    <p class="fw-semibold mb-0">
+                        {{ department.ContactExtension or "Not provided" }}
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Assigned Doctors -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-white border-0 pt-4 px-4">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+
+                    <h5 class="fw-bold mb-1">
+                        Assigned Doctors
+                    </h5>
+
+                    <p class="text-muted mb-0">
+                        Medical staff currently assigned to this department.
+                    </p>
+
+                </div>
+
+
+                <span class="badge bg-primary fs-6">
+                    {{ doctors|length }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body px-4">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+
+                        <tr>
+                            <th>Doctor ID</th>
+                            <th>Doctor Name</th>
+                            <th>License No.</th>
+                            <th>Specialization</th>
+                            <th>Phone Number</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for doctor in doctors %}
+
+                        <tr>
+
+                            <td>
+                                #{{ doctor.DoctorID }}
+                            </td>
+
+
+                            <td class="fw-semibold">
+
+                                <i class="bi bi-person-badge me-1"></i>
+
+                                {{ doctor.DoctorName }}
+
+                            </td>
+
+
+                            <td>
+                                {{ doctor.LicenseNo or "—" }}
+                            </td>
+
+
+                            <td>
+
+                                {% if doctor.Specialization %}
+
+                                    <span class="badge bg-light text-dark border">
+                                        {{ doctor.Specialization }}
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="text-muted">
+                                        —
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+                                {{ doctor.PhoneNumber or "—" }}
+                            </td>
+
+                        </tr>
+
+
+                        {% else %}
+
+                        <tr>
+
+                            <td
+                                colspan="5"
+                                class="text-center text-muted py-5"
+                            >
+
+                                <i class="bi bi-person-x fs-3 d-block mb-2"></i>
+
+                                No doctors are currently assigned to this department.
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

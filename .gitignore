@@ -1,0 +1,55 @@
+# Python virtual environments
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Editor settings
+.vscode/
+.idea/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Database files and backups
+*.db
+*.sqlite
+*.sqlite3
+*.sql
+*.dump
+*.bak
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Local uploads
+uploads/
+instance/
+
+# Build files
+build/
+dist/
+*.egg-info/
+
+# Local account setup and development testing
+/create_admin.py
+/create_doctor.py
+/create_receptionist.py
+/test_db_connection.py
+/test_*.py

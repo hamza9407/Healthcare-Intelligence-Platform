@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block title %}
+Add Doctor | Healthcare Intelligence Platform
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="mb-4">
+
+        <h2 class="fw-bold mb-1">
+            Add Doctor
+        </h2>
+
+        <p class="text-muted mb-0">
+            Register a new doctor and assign a hospital department.
+        </p>
+
+    </div>
+
+
+    <div class="row">
+
+        <div class="col-lg-8">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-header bg-white border-0 pt-4 px-4">
+
+                    <h5 class="fw-bold mb-1">
+                        Doctor Information
+                    </h5>
+
+                    <p class="text-muted mb-0">
+                        Enter the doctor's professional and contact information.
+                    </p>
+
+                </div>
+
+
+                <div class="card-body p-4">
+
+                    <form method="POST">
+
+                        <div class="row g-4">
+
+
+                            <!-- Doctor Name -->
+                            <div class="col-md-6">
+
+                                <label
+                                    for="doctor_name"
+                                    class="form-label"
+                                >
+                                    Doctor Name *
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="doctor_name"
+                                    name="doctor_name"
+                                    placeholder="e.g. Dr. Ahmed Khan"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <!-- License Number -->
+                            <div class="col-md-6">
+
+                                <label
+                                    for="license_no"
+                                    class="form-label"
+                                >
+                                    License Number *
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="license_no"
+                                    name="license_no"
+                                    maxlength="20"
+                                    placeholder="e.g. LIC011"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <!-- Specialization -->
+                            <div class="col-md-6">
+
+                                <label
+                                    for="specialization"
+                                    class="form-label"
+                                >
+                                    Specialization *
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="specialization"
+                                    name="specialization"
+                                    maxlength="50"
+                                    placeholder="e.g. Dermatology"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <!-- Phone Number -->
+                            <div class="col-md-6">
+
+                                <label
+                                    for="phone_number"
+                                    class="form-label"
+                                >
+                                    Phone Number
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="phone_number"
+                                    name="phone_number"
+                                    maxlength="15"
+                                    placeholder="e.g. 03001234567"
+                                >
+
+                            </div>
+
+
+                            <!-- Department -->
+                            <div class="col-md-6">
+
+                                <label
+                                    for="department_id"
+                                    class="form-label"
+                                >
+                                    Department
+                                </label>
+
+                                <select
+                                    class="form-select"
+                                    id="department_id"
+                                    name="department_id"
+                                >
+
+                                    <option value="">
+                                        Select Department
+                                    </option>
+
+
+                                    {% for department in departments %}
+
+                                    <option
+                                        value="{{ department.DepartmentID }}"
+                                    >
+                                        {{ department.DepartmentName }}
+                                    </option>
+
+                                    {% endfor %}
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+
+                            <a
+                                href="{{ url_for('main.doctors') }}"
+                                class="btn btn-outline-secondary"
+                            >
+                                <i class="bi bi-arrow-left"></i>
+                                Cancel
+                            </a>
+
+
+                            <button
+                                type="submit"
+                                class="btn btn-dark"
+                            >
+                                <i class="bi bi-person-plus"></i>
+                                Add Doctor
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

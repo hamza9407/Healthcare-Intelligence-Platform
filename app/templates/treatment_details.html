@@ -1,0 +1,414 @@
+{% extends "base.html" %}
+
+{% block title %}
+Treatment #{{ treatment.TreatmentID }} | Healthcare Intelligence Platform
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid">
+
+<!-- Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <h2 class="fw-bold mb-1">
+            Treatment Profile
+        </h2>
+
+        <p class="text-muted mb-0">
+            Treatment #{{ treatment.TreatmentID }}
+        </p>
+
+    </div>
+
+
+    <div class="d-flex gap-2">
+
+        <!-- Edit Treatment -->
+        <a
+            href="{{ url_for(
+                'main.edit_treatment',
+                treatment_id=treatment.TreatmentID
+            ) }}"
+            class="btn btn-dark"
+        >
+            <i class="bi bi-pencil"></i>
+            Edit Treatment
+        </a>
+
+
+        <!-- Back to Treatments -->
+        <a
+            href="{{ url_for('main.treatments') }}"
+            class="btn btn-outline-secondary"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Back to Treatments
+        </a>
+
+    </div>
+
+</div>
+
+
+    <!-- Treatment Summary -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Treatment Type
+                    </small>
+
+                    <h5 class="fw-bold mb-0">
+                        {{ treatment.TreatmentType }}
+                    </h5>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Treatment Date
+                    </small>
+
+                    <h5 class="fw-bold mb-0">
+                        {{ treatment.TreatmentDate }}
+                    </h5>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Outcome
+                    </small>
+
+                    <div class="mt-1">
+
+                        {% if treatment.TreatmentOutcome == "Recovered" %}
+
+                            <span class="badge bg-success">
+                                Recovered
+                            </span>
+
+                        {% elif treatment.TreatmentOutcome == "Improved" %}
+
+                            <span class="badge bg-primary">
+                                Improved
+                            </span>
+
+                        {% elif treatment.TreatmentOutcome == "Under Treatment" %}
+
+                            <span class="badge bg-warning text-dark">
+                                Under Treatment
+                            </span>
+
+                        {% elif treatment.TreatmentOutcome %}
+
+                            <span class="badge bg-secondary">
+                                {{ treatment.TreatmentOutcome }}
+                            </span>
+
+                        {% else %}
+
+                            <span class="text-muted">
+                                Not recorded
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Treatment Cost
+                    </small>
+
+                    <h5 class="fw-bold mb-0">
+                        Rs.
+                        {{ "{:,.2f}".format(
+                            treatment.TreatmentCost
+                        ) }}
+                    </h5>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Treatment Information -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-header bg-white border-0 pt-4 px-4">
+
+            <h5 class="fw-bold mb-0">
+                Treatment Information
+            </h5>
+
+        </div>
+
+
+        <div class="card-body p-4">
+
+            <div class="row g-4">
+
+                <div class="col-md-6">
+
+                    <small class="text-muted">
+                        Medicine / Details
+                    </small>
+
+                    <p class="fw-semibold mb-0">
+                        {{ treatment.MedicineDetails or "—" }}
+                    </p>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <small class="text-muted">
+                        Treatment Outcome
+                    </small>
+
+                    <p class="fw-semibold mb-0">
+                        {{ treatment.TreatmentOutcome or "Not recorded" }}
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Patient and Clinical Context -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-white border-0 pt-4 px-4">
+
+            <h5 class="fw-bold mb-0">
+                Patient & Admission Information
+            </h5>
+
+        </div>
+
+
+        <div class="card-body p-4">
+
+            <div class="row g-4">
+
+                <!-- Patient -->
+                <div class="col-md-4">
+
+                    <small class="text-muted">
+                        Patient
+                    </small>
+
+                    <p class="mb-0">
+
+                        <a
+                            href="{{ url_for(
+                                'main.patient_details',
+                                patient_id=treatment.PatientID
+                            ) }}"
+                            class="text-decoration-none fw-semibold"
+                        >
+                            {{ treatment.PatientName }}
+                        </a>
+
+                    </p>
+
+                </div>
+
+
+                <!-- Admission -->
+                <div class="col-md-4">
+
+                    <small class="text-muted">
+                        Admission
+                    </small>
+
+                    <p class="mb-0">
+
+                        <a
+                            href="{{ url_for(
+                                'main.admission_details',
+                                admission_id=treatment.AdmissionID
+                            ) }}"
+                            class="text-decoration-none fw-semibold"
+                        >
+                            Admission #{{ treatment.AdmissionID }}
+                        </a>
+
+                    </p>
+
+                </div>
+
+
+                <!-- Disease -->
+                <div class="col-md-4">
+
+                    <small class="text-muted">
+                        Disease
+                    </small>
+
+                    <p class="mb-0">
+
+                        <a
+                            href="{{ url_for(
+                                'main.disease_details',
+                                disease_id=treatment.DiseaseID
+                            ) }}"
+                            class="text-decoration-none fw-semibold"
+                        >
+                            {{ treatment.DiseaseName }}
+                        </a>
+
+                    </p>
+
+                </div>
+
+
+                <!-- Doctor -->
+                <div class="col-md-4">
+
+                    <small class="text-muted">
+                        Doctor
+                    </small>
+
+                    <p class="fw-semibold mb-0">
+                        {{ treatment.DoctorName }}
+                    </p>
+
+                </div>
+
+
+                <!-- Department -->
+                <div class="col-md-4">
+
+                    <small class="text-muted">
+                        Department
+                    </small>
+
+                    <p class="fw-semibold mb-0">
+                        {{ treatment.DepartmentName }}
+                    </p>
+
+                </div>
+
+
+                <!-- Admission Status -->
+                <div class="col-md-4">
+
+                    <small class="text-muted">
+                        Admission Status
+                    </small>
+
+                    <p class="mb-0">
+
+                        {% if treatment.AdmissionStatus == "Active" %}
+
+                            <span class="badge bg-success">
+                                Active
+                            </span>
+
+                        {% elif treatment.AdmissionStatus == "Discharged" %}
+
+                            <span class="badge bg-secondary">
+                                Discharged
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-warning text-dark">
+                                {{ treatment.AdmissionStatus }}
+                            </span>
+
+                        {% endif %}
+
+                    </p>
+
+                </div>
+
+
+                <!-- Admission Date -->
+                <div class="col-md-4">
+
+                    <small class="text-muted">
+                        Admission Date
+                    </small>
+
+                    <p class="fw-semibold mb-0">
+                        {{ treatment.AdmissionDate }}
+                    </p>
+
+                </div>
+
+
+                <!-- Discharge Date -->
+                <div class="col-md-4">
+
+                    <small class="text-muted">
+                        Discharge Date
+                    </small>
+
+                    <p class="fw-semibold mb-0">
+                        {{ treatment.DischargeDate or "—" }}
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

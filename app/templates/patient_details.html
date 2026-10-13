@@ -1,0 +1,290 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ patient.PatientName }} | Healthcare Intelligence Platform
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                Patient Profile
+            </h2>
+
+            <p class="text-muted mb-0">
+                Complete patient information and healthcare record.
+            </p>
+        </div>
+
+        <a
+            href="{{ url_for('main.patients') }}"
+            class="btn btn-outline-secondary"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Back to Patients
+        </a>
+
+    </div>
+
+
+    <!-- Patient Summary -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex align-items-center">
+
+                <div class="me-4">
+
+                    <div class="fs-1">
+                        <i class="bi bi-person-circle"></i>
+                    </div>
+
+                </div>
+
+                <div>
+
+                    <h3 class="fw-bold mb-1">
+                        {{ patient.PatientName }}
+                    </h3>
+
+                    <p class="text-muted mb-1">
+                        Patient ID: #{{ patient.PatientID }}
+                    </p>
+
+                    {% if patient.BloodGroup %}
+
+                    <span class="badge bg-danger">
+                        Blood Group: {{ patient.BloodGroup }}
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Personal Information -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-header bg-white border-0 pt-4 px-4">
+
+            <h5 class="fw-bold mb-0">
+                Personal Information
+            </h5>
+
+        </div>
+
+
+        <div class="card-body p-4">
+
+            <div class="row g-4">
+
+                <div class="col-md-4">
+                    <small class="text-muted">CNIC</small>
+
+                    <p class="fw-semibold mb-0">
+                        {{ patient.CNIC }}
+                    </p>
+                </div>
+
+
+                <div class="col-md-4">
+                    <small class="text-muted">Gender</small>
+
+                    <p class="fw-semibold mb-0">
+                        {{ patient.Gender }}
+                    </p>
+                </div>
+
+
+                <div class="col-md-4">
+                    <small class="text-muted">Date of Birth</small>
+
+                    <p class="fw-semibold mb-0">
+                        {{ patient.DateOfBirth or "Not provided" }}
+                    </p>
+                </div>
+
+
+                <div class="col-md-4">
+                    <small class="text-muted">Phone Number</small>
+
+                    <p class="fw-semibold mb-0">
+                        {{ patient.PhoneNumber or "Not provided" }}
+                    </p>
+                </div>
+
+
+                <div class="col-md-4">
+                    <small class="text-muted">Emergency Contact</small>
+
+                    <p class="fw-semibold mb-0">
+                        {{ patient.EmergencyContact or "Not provided" }}
+                    </p>
+                </div>
+
+
+                <div class="col-md-4">
+                    <small class="text-muted">Blood Group</small>
+
+                    <p class="fw-semibold mb-0">
+                        {{ patient.BloodGroup or "Not provided" }}
+                    </p>
+                </div>
+
+
+                <div class="col-12">
+                    <small class="text-muted">Address</small>
+
+                    <p class="fw-semibold mb-0">
+                        {{ patient.Address or "Not provided" }}
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Admission History -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-white border-0 pt-4 px-4">
+
+            <h5 class="fw-bold mb-1">
+                Admission History
+            </h5>
+
+            <p class="text-muted mb-0">
+                Previous and current hospital admissions for this patient.
+            </p>
+
+        </div>
+
+
+        <div class="card-body px-4">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+
+                        <tr>
+                            <th>Admission ID</th>
+                            <th>Admission Date</th>
+                            <th>Doctor</th>
+                            <th>Department</th>
+                            <th>Disease</th>
+                            <th>Type</th>
+                            <th>Room</th>
+                            <th>Status</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for admission in admission_history %}
+
+                        <tr>
+
+                            <td>
+                                #{{ admission.AdmissionID }}
+                            </td>
+
+                            <td>
+                                {{ admission.AdmissionDate or "Not recorded" }}
+                            </td>
+
+                            <td>
+                                {{ admission.DoctorName or "Not assigned" }}
+                            </td>
+
+                            <td>
+                                {{ admission.DepartmentName or "Not assigned" }}
+                            </td>
+
+                            <td>
+                                {{ admission.DiseaseName or "Not recorded" }}
+                            </td>
+
+                            <td>
+                                {{ admission.AdmissionType or "Not recorded" }}
+                            </td>
+
+                            <td>
+                                {{ admission.RoomNumber or "—" }}
+                            </td>
+
+                            <td>
+
+                                {% if admission.AdmissionStatus == "Active" %}
+
+                                <span class="badge bg-success">
+                                    Active
+                                </span>
+
+                                {% elif admission.AdmissionStatus == "Discharged" %}
+
+                                <span class="badge bg-secondary">
+                                    Discharged
+                                </span>
+
+                                {% else %}
+
+                                <span class="badge bg-warning text-dark">
+                                    {{ admission.AdmissionStatus or "Unknown" }}
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+
+                        {% else %}
+
+                        <tr>
+
+                            <td
+                                colspan="8"
+                                class="text-center text-muted py-4"
+                            >
+                                <i class="bi bi-info-circle me-1"></i>
+                                No admission history found for this patient.
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,320 @@
+{% extends "base.html" %}
+
+{% block title %}
+New Admission | Healthcare Intelligence Platform
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="mb-4">
+
+        <h2 class="fw-bold mb-1">
+            New Patient Admission
+        </h2>
+
+        <p class="text-muted mb-0">
+            Register a patient admission and assign clinical information.
+        </p>
+
+    </div>
+
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-white border-0 pt-4 px-4">
+
+            <h5 class="fw-bold mb-1">
+                Admission Information
+            </h5>
+
+            <p class="text-muted mb-0">
+                Select the patient, doctor, department and diagnosis.
+            </p>
+
+        </div>
+
+
+        <div class="card-body p-4">
+
+            <form method="POST">
+
+                <div class="row g-4">
+
+
+                    <!-- Patient -->
+                    <div class="col-md-6">
+
+                        <label
+                            for="patient_id"
+                            class="form-label"
+                        >
+                            Patient *
+                        </label>
+
+                        <select
+                            class="form-select"
+                            id="patient_id"
+                            name="patient_id"
+                            required
+                        >
+
+                            <option value="" selected disabled>
+                                Select Patient
+                            </option>
+
+                            {% for patient in patients %}
+
+                            <option value="{{ patient.PatientID }}">
+                                {{ patient.PatientName }}
+                                — {{ patient.CNIC }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Doctor -->
+                    <div class="col-md-6">
+
+                        <label
+                            for="doctor_id"
+                            class="form-label"
+                        >
+                            Doctor *
+                        </label>
+
+                        <select
+                            class="form-select"
+                            id="doctor_id"
+                            name="doctor_id"
+                            required
+                        >
+
+                            <option value="" selected disabled>
+                                Select Doctor
+                            </option>
+
+                            {% for doctor in doctors %}
+
+                            <option
+                                value="{{ doctor.DoctorID }}"
+                                data-department="{{ doctor.DepartmentID }}"
+                            >
+                                {{ doctor.DoctorName }}
+                                — {{ doctor.Specialization }}
+                                {% if doctor.DepartmentName %}
+                                ({{ doctor.DepartmentName }})
+                                {% endif %}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Department -->
+                    <div class="col-md-6">
+
+                        <label
+                            for="department_id"
+                            class="form-label"
+                        >
+                            Department *
+                        </label>
+
+                        <select
+                            class="form-select"
+                            id="department_id"
+                            name="department_id"
+                            required
+                        >
+
+                            <option value="" selected disabled>
+                                Select Department
+                            </option>
+
+                            {% for department in departments %}
+
+                            <option value="{{ department.DepartmentID }}">
+                                {{ department.DepartmentName }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Disease -->
+                    <div class="col-md-6">
+
+                        <label
+                            for="disease_id"
+                            class="form-label"
+                        >
+                            Disease / Diagnosis *
+                        </label>
+
+                        <select
+                            class="form-select"
+                            id="disease_id"
+                            name="disease_id"
+                            required
+                        >
+
+                            <option value="" selected disabled>
+                                Select Disease
+                            </option>
+
+                            {% for disease in diseases %}
+
+                            <option value="{{ disease.DiseaseID }}">
+                                {{ disease.DiseaseName }}
+                                — {{ disease.DiseaseCategory }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Admission Date -->
+                    <div class="col-md-4">
+
+                        <label
+                            for="admission_date"
+                            class="form-label"
+                        >
+                            Admission Date *
+                        </label>
+
+                        <input
+                            type="date"
+                            class="form-control"
+                            id="admission_date"
+                            name="admission_date"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Admission Type -->
+                    <div class="col-md-4">
+
+                        <label
+                            for="admission_type"
+                            class="form-label"
+                        >
+                            Admission Type *
+                        </label>
+
+                        <select
+                            class="form-select"
+                            id="admission_type"
+                            name="admission_type"
+                            required
+                        >
+
+                            <option value="" selected disabled>
+                                Select Type
+                            </option>
+
+                            <option value="Emergency">
+                                Emergency
+                            </option>
+
+                            <option value="Scheduled">
+                                Scheduled
+                            </option>
+
+                            <option value="Referral">
+                                Referral
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Room -->
+                    <div class="col-md-4">
+
+                        <label
+                            for="room_number"
+                            class="form-label"
+                        >
+                            Room Number
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="room_number"
+                            name="room_number"
+                            maxlength="10"
+                            placeholder="e.g. C103"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- Information -->
+                <div class="alert alert-light border mt-4 mb-0">
+
+                    <i class="bi bi-info-circle me-1"></i>
+
+                    New admissions are automatically created with
+                    <strong>Active</strong> status.
+
+                    Discharge information will be recorded separately
+                    when the patient is discharged.
+
+                </div>
+
+
+                <!-- Buttons -->
+                <div class="d-flex justify-content-end gap-2 mt-4">
+
+                    <a
+                        href="{{ url_for('main.admissions') }}"
+                        class="btn btn-outline-secondary"
+                    >
+                        <i class="bi bi-arrow-left"></i>
+                        Cancel
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-dark"
+                    >
+                        <i class="bi bi-plus-circle"></i>
+                        Create Admission
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

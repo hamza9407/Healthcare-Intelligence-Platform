@@ -1,0 +1,394 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+Patients | Healthcare Intelligence Platform
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                Patient Management
+            </h2>
+
+            <p class="text-muted mb-0">
+                View, search and manage registered patients.
+            </p>
+        </div>
+
+        <!-- Add Patient: Administrator and Receptionist -->
+        {% if current_user.role in ["administrator", "receptionist"] %}
+
+        <div>
+            <a
+                href="{{ url_for('main.add_patient') }}"
+                class="btn btn-dark"
+            >
+                <i class="bi bi-person-plus"></i>
+                Add Patient
+            </a>
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- Search and Filters -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body p-4">
+
+            <form
+                method="GET"
+                action="{{ url_for('main.patients') }}"
+            >
+
+                <div class="row g-3 align-items-end">
+
+                    <!-- Search -->
+                    <div class="col-lg-5 col-md-12">
+
+                        <label class="form-label">
+                            Search Patient
+                        </label>
+
+                        <div class="input-group">
+
+                            <span class="input-group-text bg-white">
+                                <i class="bi bi-search"></i>
+                            </span>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                name="search"
+                                value="{{ search or '' }}"
+                                placeholder="Name, CNIC or phone number"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Gender Filter -->
+                    <div class="col-lg-2 col-md-4">
+
+                        <label class="form-label">
+                            Gender
+                        </label>
+
+                        <select
+                            class="form-select"
+                            name="gender"
+                        >
+
+                            <option value="">
+                                All Genders
+                            </option>
+
+                            <option
+                                value="Male"
+                                {% if gender == "Male" %}selected{% endif %}
+                            >
+                                Male
+                            </option>
+
+                            <option
+                                value="Female"
+                                {% if gender == "Female" %}selected{% endif %}
+                            >
+                                Female
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Blood Group Filter -->
+                    <div class="col-lg-2 col-md-4">
+
+                        <label class="form-label">
+                            Blood Group
+                        </label>
+
+                        <select
+                            class="form-select"
+                            name="blood_group"
+                        >
+
+                            <option value="">
+                                All Groups
+                            </option>
+
+                            {% for group in [
+                                "A+", "A-", "B+", "B-",
+                                "AB+", "AB-", "O+", "O-"
+                            ] %}
+
+                            <option
+                                value="{{ group }}"
+                                {% if blood_group == group %}selected{% endif %}
+                            >
+                                {{ group }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Search Button -->
+                    <div class="col-lg-1 col-md-2">
+
+                        <button
+                            type="submit"
+                            class="btn btn-dark w-100"
+                            title="Search Patients"
+                        >
+                            <i class="bi bi-search"></i>
+                        </button>
+
+                    </div>
+
+
+                    <!-- Reset Button -->
+                    <div class="col-lg-2 col-md-2">
+
+                        <a
+                            href="{{ url_for('main.patients') }}"
+                            class="btn btn-outline-secondary w-100"
+                        >
+                            <i class="bi bi-arrow-counterclockwise"></i>
+                            Reset
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- Patient Table -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-white border-0 pt-4 px-4">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+
+                    <h5 class="fw-bold mb-1">
+                        Patient Records
+                    </h5>
+
+                    <p class="text-muted mb-0">
+                        Records found: {{ patients|length }}
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body px-4">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Patient Name</th>
+                            <th>CNIC</th>
+                            <th>Gender</th>
+                            <th>Date of Birth</th>
+                            <th>Phone</th>
+                            <th>Blood Group</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for patient in patients %}
+
+                        <tr>
+
+                            <!-- Patient ID -->
+                            <td>
+                                #{{ patient.PatientID }}
+                            </td>
+
+
+                            <!-- Patient Name -->
+                            <td class="fw-semibold">
+                                {{ patient.PatientName }}
+                            </td>
+
+
+                            <!-- CNIC -->
+                            <td>
+                                {{ patient.CNIC }}
+                            </td>
+
+
+                            <!-- Gender -->
+                            <td>
+                                {{ patient.Gender }}
+                            </td>
+
+
+                            <!-- Date of Birth -->
+                            <td>
+                                {{ patient.DateOfBirth or "—" }}
+                            </td>
+
+
+                            <!-- Phone Number -->
+                            <td>
+                                {{ patient.PhoneNumber or "—" }}
+                            </td>
+
+
+                            <!-- Blood Group -->
+                            <td>
+
+                                {% if patient.BloodGroup %}
+
+                                <span class="badge bg-danger">
+                                    {{ patient.BloodGroup }}
+                                </span>
+
+                                {% else %}
+
+                                <span class="text-muted">
+                                    —
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- Action Buttons -->
+                            <td>
+
+                                <div class="d-flex gap-1">
+
+                                    <!-- View: All Authenticated Users -->
+                                    <a
+                                        href="{{ url_for(
+                                            'main.patient_details',
+                                            patient_id=patient.PatientID
+                                        ) }}"
+                                        class="btn btn-sm btn-outline-primary"
+                                        title="View Patient"
+                                    >
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+
+
+                                    <!-- Edit: Administrator and Receptionist -->
+                                    {% if current_user.role in ["administrator", "receptionist"] %}
+
+                                    <a
+                                        href="{{ url_for(
+                                            'main.edit_patient',
+                                            patient_id=patient.PatientID
+                                        ) }}"
+                                        class="btn btn-sm btn-outline-secondary"
+                                        title="Edit Patient"
+                                    >
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+
+                                    {% endif %}
+
+
+                                    <!-- Delete: Administrator Only -->
+                                    {% if current_user.role == "administrator" %}
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for(
+                                            'main.delete_patient',
+                                            patient_id=patient.PatientID
+                                        ) }}"
+                                        class="d-inline"
+                                        onsubmit="return confirm(
+                                            'Are you sure you want to delete this patient?'
+                                        );"
+                                    >
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-sm btn-outline-danger"
+                                            title="Delete Patient"
+                                        >
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+
+                                    </form>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+
+                        {% else %}
+
+                        <!-- No Patients Found -->
+                        <tr>
+
+                            <td
+                                colspan="8"
+                                class="text-center text-muted py-5"
+                            >
+
+                                <i class="bi bi-search fs-4 d-block mb-2"></i>
+
+                                No patients matched your search or filters.
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

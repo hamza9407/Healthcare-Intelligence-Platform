@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edit {{ doctor.DoctorName }} | Healthcare Intelligence Platform
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="mb-4">
+
+        <h2 class="fw-bold mb-1">
+            Edit Doctor
+        </h2>
+
+        <p class="text-muted mb-0">
+            Update doctor information and department assignment.
+        </p>
+
+    </div>
+
+
+    <div class="row">
+
+        <div class="col-lg-8">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-header bg-white border-0 pt-4 px-4">
+
+                    <h5 class="fw-bold mb-1">
+                        {{ doctor.DoctorName }}
+                    </h5>
+
+                    <p class="text-muted mb-0">
+                        Doctor ID: #{{ doctor.DoctorID }}
+                    </p>
+
+                </div>
+
+
+                <div class="card-body p-4">
+
+                    <form method="POST">
+
+                        <div class="row g-4">
+
+
+                            <!-- Doctor Name -->
+                            <div class="col-md-6">
+
+                                <label
+                                    for="doctor_name"
+                                    class="form-label"
+                                >
+                                    Doctor Name *
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="doctor_name"
+                                    name="doctor_name"
+                                    value="{{ doctor.DoctorName }}"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <!-- License Number -->
+                            <div class="col-md-6">
+
+                                <label
+                                    for="license_no"
+                                    class="form-label"
+                                >
+                                    License Number *
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="license_no"
+                                    name="license_no"
+                                    value="{{ doctor.LicenseNo }}"
+                                    maxlength="20"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <!-- Specialization -->
+                            <div class="col-md-6">
+
+                                <label
+                                    for="specialization"
+                                    class="form-label"
+                                >
+                                    Specialization *
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="specialization"
+                                    name="specialization"
+                                    value="{{ doctor.Specialization }}"
+                                    maxlength="50"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <!-- Phone Number -->
+                            <div class="col-md-6">
+
+                                <label
+                                    for="phone_number"
+                                    class="form-label"
+                                >
+                                    Phone Number
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="phone_number"
+                                    name="phone_number"
+                                    value="{{ doctor.PhoneNumber or '' }}"
+                                    maxlength="15"
+                                >
+
+                            </div>
+
+
+                            <!-- Department -->
+                            <div class="col-md-6">
+
+                                <label
+                                    for="department_id"
+                                    class="form-label"
+                                >
+                                    Department
+                                </label>
+
+                                <select
+                                    class="form-select"
+                                    id="department_id"
+                                    name="department_id"
+                                >
+
+                                    <option value="">
+                                        Unassigned
+                                    </option>
+
+                                    {% for department in departments %}
+
+                                    <option
+                                        value="{{ department.DepartmentID }}"
+
+                                        {% if
+                                            doctor.DepartmentID
+                                            == department.DepartmentID
+                                        %}
+                                            selected
+                                        {% endif %}
+                                    >
+                                        {{ department.DepartmentName }}
+                                    </option>
+
+                                    {% endfor %}
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+
+                            <a
+                                href="{{ url_for(
+                                    'main.doctor_details',
+                                    doctor_id=doctor.DoctorID
+                                ) }}"
+                                class="btn btn-outline-secondary"
+                            >
+                                <i class="bi bi-x-circle"></i>
+                                Cancel
+                            </a>
+
+
+                            <button
+                                type="submit"
+                                class="btn btn-dark"
+                            >
+                                <i class="bi bi-check-circle"></i>
+                                Save Changes
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

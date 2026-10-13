@@ -1,0 +1,390 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+Diseases | Healthcare Intelligence Platform
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                Disease Management
+            </h2>
+
+            <p class="text-muted mb-0">
+                Manage disease classifications and diagnostic records.
+            </p>
+        </div>
+
+        <!-- Add Disease: Administrator Only -->
+        {% if current_user.role == "administrator" %}
+
+        <a
+            href="{{ url_for('main.add_disease') }}"
+            class="btn btn-dark"
+        >
+            <i class="bi bi-plus-circle"></i>
+            Add Disease
+        </a>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- Statistics -->
+    <div class="row g-4 mb-4">
+
+        <!-- Total Diseases -->
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Total Diseases
+                    </small>
+
+                    <h3 class="fw-bold mb-0">
+                        {{ disease_stats.TotalDiseases or 0 }}
+                    </h3>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Categories -->
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Categories
+                    </small>
+
+                    <h3 class="fw-bold mb-0">
+                        {{ disease_stats.TotalCategories or 0 }}
+                    </h3>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ICD-10 -->
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        ICD-10 Mapped
+                    </small>
+
+                    <h3 class="fw-bold mb-0">
+                        {{ disease_stats.ICD10Count or 0 }}
+                    </h3>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ICD-11 -->
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        ICD-11 Mapped
+                    </small>
+
+                    <h3 class="fw-bold mb-0">
+                        {{ disease_stats.ICD11Count or 0 }}
+                    </h3>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Disease Records -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-white border-0 pt-4 px-4">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+                    <h5 class="fw-bold mb-1">
+                        Disease Records
+                    </h5>
+
+                    <p class="text-muted mb-0">
+                        Total records: {{ diseases|length }}
+                    </p>
+                </div>
+
+
+                <!-- Search -->
+                <div style="max-width: 300px; width: 100%;">
+
+                    <input
+                        type="text"
+                        id="diseaseSearch"
+                        class="form-control"
+                        placeholder="Search disease, category or ICD..."
+                    >
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body px-4">
+
+            <div class="table-responsive">
+
+                <table
+                    class="table table-hover align-middle"
+                    id="diseaseTable"
+                >
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Disease</th>
+                            <th>Category</th>
+                            <th>ICD-10</th>
+                            <th>ICD-11</th>
+                            <th>Description</th>
+                            <th>Admissions</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for disease in diseases %}
+
+                        <tr>
+
+                            <!-- Disease ID -->
+                            <td>
+                                #{{ disease.DiseaseID }}
+                            </td>
+
+
+                            <!-- Disease Name -->
+                            <td class="fw-semibold">
+                                {{ disease.DiseaseName }}
+                            </td>
+
+
+                            <!-- Category -->
+                            <td>
+
+                                <span class="badge bg-secondary">
+                                    {{ disease.DiseaseCategory }}
+                                </span>
+
+                            </td>
+
+
+                            <!-- ICD-10 -->
+                            <td>
+
+                                {% if disease.ICD10Code %}
+
+                                <span class="badge bg-primary">
+                                    {{ disease.ICD10Code }}
+                                </span>
+
+                                {% else %}
+
+                                <span class="text-muted">
+                                    —
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- ICD-11 -->
+                            <td>
+
+                                {% if disease.ICD11Code %}
+
+                                <span class="badge bg-info text-dark">
+                                    {{ disease.ICD11Code }}
+                                </span>
+
+                                {% else %}
+
+                                <span class="text-muted">
+                                    —
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- Description -->
+                            <td>
+
+                                {% if disease.Description %}
+
+                                {{ disease.Description }}
+
+                                {% else %}
+
+                                <span class="text-muted">
+                                    —
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- Admissions -->
+                            <td>
+
+                                {% if disease.AdmissionCount > 0 %}
+
+                                <span class="badge bg-success">
+
+                                    <i class="bi bi-hospital me-1"></i>
+
+                                    {{ disease.AdmissionCount }}
+
+                                </span>
+
+                                {% else %}
+
+                                <span class="badge bg-light text-dark border">
+                                    0
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- Actions -->
+                            <td>
+
+                                <div class="d-flex gap-1">
+
+                                    <!-- View: All Authenticated Users -->
+                                    <a
+                                        href="{{ url_for(
+                                            'main.disease_details',
+                                            disease_id=disease.DiseaseID
+                                        ) }}"
+                                        class="btn btn-sm btn-outline-primary"
+                                        title="View Disease"
+                                    >
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+
+
+                                    <!-- Edit: Administrator Only -->
+                                    {% if current_user.role == "administrator" %}
+
+                                    <a
+                                        href="{{ url_for(
+                                            'main.edit_disease',
+                                            disease_id=disease.DiseaseID
+                                        ) }}"
+                                        class="btn btn-sm btn-outline-secondary"
+                                        title="Edit Disease"
+                                    >
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+
+                        {% else %}
+
+                        <!-- Empty State -->
+                        <tr>
+
+                            <td
+                                colspan="8"
+                                class="text-center text-muted py-4"
+                            >
+                                No disease records found.
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Live Search -->
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const searchInput = document.getElementById("diseaseSearch");
+    const table = document.getElementById("diseaseTable");
+
+    if (!searchInput || !table) {
+        return;
+    }
+
+    searchInput.addEventListener("keyup", function () {
+
+        const searchValue = searchInput.value.toLowerCase();
+
+        const rows = table.querySelectorAll("tbody tr");
+
+        rows.forEach(function (row) {
+
+            const rowText = row.textContent.toLowerCase();
+
+            row.style.display = rowText.includes(searchValue)
+                ? ""
+                : "none";
+
+        });
+
+    });
+
+});
+
+</script>
+
+{% endblock %}

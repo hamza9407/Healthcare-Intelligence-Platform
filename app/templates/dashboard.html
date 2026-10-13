@@ -1,0 +1,506 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard | Healthcare Intelligence Platform
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <div class="mb-4">
+        <h2 class="fw-bold">Healthcare Dashboard</h2>
+        <p class="text-muted">
+            Overview of hospital operations and patient activity.
+        </p>
+    </div>
+
+    <!-- Main Statistics -->
+    <div class="row g-4">
+
+        <!-- Patients -->
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1">Total Patients</p>
+                            <h2 class="fw-bold mb-0">{{ patient_count }}</h2>
+                        </div>
+                        <div class="fs-1">
+                            <i class="bi bi-people"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Doctors -->
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1">Total Doctors</p>
+                            <h2 class="fw-bold mb-0">{{ doctor_count }}</h2>
+                        </div>
+                        <div class="fs-1">
+                            <i class="bi bi-person-badge"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admissions -->
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1">Total Admissions</p>
+                            <h2 class="fw-bold mb-0">{{ admission_count }}</h2>
+                        </div>
+                        <div class="fs-1">
+                            <i class="bi bi-building"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Admissions -->
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1">Active Admissions</p>
+                            <h2 class="fw-bold mb-0">{{ active_admission_count }}</h2>
+                        </div>
+                        <div class="fs-1">
+                            <i class="bi bi-activity"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Financial and Operational Overview -->
+    <div class="mt-5 mb-3">
+        <h4 class="fw-bold">
+            {% if current_user.role in ["administrator", "receptionist"] %}
+                Financial &amp; Operational Overview
+            {% else %}
+                Operational Overview
+            {% endif %}
+        </h4>
+        <p class="text-muted">
+            {% if current_user.role in ["administrator", "receptionist"] %}
+                Current payment and admission statistics.
+            {% else %}
+                Current admission statistics.
+            {% endif %}
+        </p>
+    </div>
+
+    <div class="row g-4">
+
+        {% if current_user.role in ["administrator", "receptionist"] %}
+
+        <!-- Total Revenue -->
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1">Total Revenue</p>
+                            <h3 class="fw-bold mb-0">
+                                Rs. {{ "{:,.2f}".format(total_revenue) }}
+                            </h3>
+                        </div>
+                        <div class="fs-1">
+                            <i class="bi bi-cash-coin"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Outstanding Balance -->
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1">Outstanding Balance</p>
+                            <h3 class="fw-bold mb-0">
+                                Rs. {{ "{:,.2f}".format(outstanding_balance) }}
+                            </h3>
+                        </div>
+                        <div class="fs-1">
+                            <i class="bi bi-wallet2"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% endif %}
+
+        <!-- Completed Admissions -->
+        <div class="{% if current_user.role == 'doctor' %}col-md-6 col-xl-4{% else %}col-md-4{% endif %}">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1">Completed Admissions</p>
+                            <h3 class="fw-bold mb-0">{{ completed_admissions }}</h3>
+                        </div>
+                        <div class="fs-1">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    {% if current_user.role in ["administrator", "receptionist"] %}
+
+    <!-- Financial KPI Cards -->
+    <div class="row g-4 mt-1 mb-4">
+
+        <!-- Collection Rate -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">Collection Rate</h6>
+                    <h3 class="fw-bold text-success">
+                        {{ "%.2f"|format(collection_rate) }}%
+                    </h3>
+                    <div class="progress" style="height: 10px;">
+                        <div
+                            class="progress-bar bg-success"
+                            role="progressbar"
+                            style="width: {{ collection_rate }}%;"
+                            aria-valuenow="{{ collection_rate }}"
+                            aria-valuemin="0"
+                            aria-valuemax="100">
+                        </div>
+                    </div>
+                    <small class="text-muted">
+                        Percentage of total billed amount collected
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Outstanding Percentage -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">Outstanding Percentage</h6>
+                    <h3 class="fw-bold text-danger">
+                        {{ "%.2f"|format(outstanding_percentage) }}%
+                    </h3>
+                    <div class="progress" style="height: 10px;">
+                        <div
+                            class="progress-bar bg-danger"
+                            role="progressbar"
+                            style="width: {{ outstanding_percentage }}%;"
+                            aria-valuenow="{{ outstanding_percentage }}"
+                            aria-valuemin="0"
+                            aria-valuemax="100">
+                        </div>
+                    </div>
+                    <small class="text-muted">
+                        Percentage of billed amount still outstanding
+                    </small>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    {% endif %}
+
+    <!-- Operational Analytics -->
+    <div class="mt-5 mb-3">
+        <h4 class="fw-bold">Operational Analytics</h4>
+        <p class="text-muted">
+            Visual overview of hospital admission activity.
+        </p>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Admissions Status Chart -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h5 class="fw-bold">Admissions Status</h5>
+                    <p class="text-muted">
+                        Active vs Completed Admissions
+                    </p>
+                    <div style="height: 300px;">
+                        <canvas id="admissionStatusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Admissions Trend Chart -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h5 class="fw-bold">Monthly Admissions Trend</h5>
+                    <p class="text-muted">
+                        Number of patient admissions recorded each month.
+                    </p>
+                    <div style="height: 300px;">
+                        <canvas id="dashboardAdmissionsTrendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    {% if current_user.role in ["administrator", "receptionist"] %}
+
+    <!-- Financial Overview Chart -->
+    <div class="row g-4 mt-2">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="fw-bold">Financial Overview</h5>
+                    <p class="text-muted">
+                        Comparison of total billing, collections,
+                        and outstanding balances.
+                    </p>
+                    <div style="height: 320px;">
+                        <canvas id="dashboardFinancialChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
+
+    <!-- Recent Admissions -->
+    <div class="card shadow-sm border-0 mt-5">
+
+        <div class="card-header bg-white border-0 pt-4 px-4">
+            <h4 class="fw-bold mb-1">Recent Admissions</h4>
+            <p class="text-muted mb-0">
+                Latest patient admissions recorded in the system.
+            </p>
+        </div>
+
+        <div class="card-body px-4">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>Admission ID</th>
+                            <th>Patient</th>
+                            <th>Doctor</th>
+                            <th>Department</th>
+                            <th>Admission Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for admission in recent_admissions %}
+                        <tr>
+                            <td>#{{ admission.AdmissionID }}</td>
+                            <td>{{ admission.PatientName }}</td>
+                            <td>{{ admission.DoctorName }}</td>
+                            <td>{{ admission.DepartmentName }}</td>
+                            <td>{{ admission.AdmissionDate }}</td>
+                            <td>
+                                {% if admission.AdmissionStatus == "Active" %}
+                                    <span class="badge bg-success">Active</span>
+                                {% elif admission.AdmissionStatus == "Discharged" %}
+                                    <span class="badge bg-secondary">Discharged</span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">
+                                        {{ admission.AdmissionStatus }}
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                No admissions found.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+    // Admissions Status Chart
+    const admissionStatusCanvas =
+        document.getElementById("admissionStatusChart");
+
+    if (admissionStatusCanvas) {
+        new Chart(admissionStatusCanvas, {
+            type: "doughnut",
+            data: {
+                labels: ["Active", "Completed"],
+                datasets: [{
+                    data: [
+                        {{ active_admission_count | tojson }},
+                        {{ completed_admissions | tojson }}
+                    ],
+                    backgroundColor: ["#f0ad4e", "#198754"]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: "bottom"
+                    }
+                }
+            }
+        });
+    }
+
+    // Monthly Admissions Trend Chart
+    const dashboardAdmissionLabels = {{
+        monthly_admissions
+        | map(attribute='Month')
+        | list
+        | tojson
+    }};
+
+    const dashboardAdmissionCounts = {{
+        monthly_admissions
+        | map(attribute='AdmissionCount')
+        | list
+        | tojson
+    }};
+
+    const dashboardTrendCanvas =
+        document.getElementById("dashboardAdmissionsTrendChart");
+
+    if (dashboardTrendCanvas) {
+        new Chart(dashboardTrendCanvas, {
+            type: "line",
+            data: {
+                labels: dashboardAdmissionLabels,
+                datasets: [{
+                    label: "Monthly Admissions",
+                    data: dashboardAdmissionCounts,
+                    borderColor: "#0d6efd",
+                    backgroundColor: "rgba(13, 110, 253, 0.1)",
+                    borderWidth: 2,
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    {% if current_user.role in ["administrator", "receptionist"] %}
+
+    // Financial Overview Chart
+    const financialOverviewCanvas =
+        document.getElementById("dashboardFinancialChart");
+
+    if (financialOverviewCanvas) {
+        new Chart(financialOverviewCanvas, {
+            type: "bar",
+            data: {
+                labels: [
+                    "Total Billed",
+                    "Total Collected",
+                    "Outstanding Balance"
+                ],
+                datasets: [{
+                    label: "Amount (Rs.)",
+                    data: [
+                        {{ total_billed | float | tojson }},
+                        {{ total_revenue | float | tojson }},
+                        {{ outstanding_balance | float | tojson }}
+                    ],
+                    backgroundColor: [
+                        "#0d6efd",
+                        "#198754",
+                        "#dc3545"
+                    ],
+                    borderRadius: 6,
+                    maxBarThickness: 110
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return "Rs. " +
+                                    context.parsed.y.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return "Rs. " +
+                                    Number(value).toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    {% endif %}
+</script>
+
+{% endblock %}

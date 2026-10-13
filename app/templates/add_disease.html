@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}
+Add Disease | Healthcare Intelligence Platform
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+                Add Disease
+            </h2>
+
+            <p class="text-muted mb-0">
+                Add a new disease classification to the system.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{{ url_for('main.diseases') }}"
+            class="btn btn-outline-secondary"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Back to Diseases
+        </a>
+
+    </div>
+
+
+    <!-- Form -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-white border-0 pt-4 px-4">
+
+            <h5 class="fw-bold mb-1">
+                Disease Information
+            </h5>
+
+            <p class="text-muted mb-0">
+                Fields marked with * are required.
+            </p>
+
+        </div>
+
+
+        <div class="card-body p-4">
+
+            <form method="POST">
+
+                <div class="row g-4">
+
+                    <!-- Disease Name -->
+                    <div class="col-md-6">
+
+                        <label
+                            for="disease_name"
+                            class="form-label"
+                        >
+                            Disease Name *
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="disease_name"
+                            name="disease_name"
+                            maxlength="100"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Category -->
+                    <div class="col-md-6">
+
+                        <label
+                            for="disease_category"
+                            class="form-label"
+                        >
+                            Disease Category *
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="disease_category"
+                            name="disease_category"
+                            maxlength="50"
+                            placeholder="e.g. Respiratory"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- ICD-10 -->
+                    <div class="col-md-6">
+
+                        <label
+                            for="icd10_code"
+                            class="form-label"
+                        >
+                            ICD-10 Code
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="icd10_code"
+                            name="icd10_code"
+                            maxlength="20"
+                            placeholder="e.g. J18.9"
+                        >
+
+                        <div class="form-text">
+                            Optional
+                        </div>
+
+                    </div>
+
+
+                    <!-- ICD-11 -->
+                    <div class="col-md-6">
+
+                        <label
+                            for="icd11_code"
+                            class="form-label"
+                        >
+                            ICD-11 Code
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="icd11_code"
+                            name="icd11_code"
+                            maxlength="20"
+                            placeholder="e.g. CA40.Z"
+                        >
+
+                        <div class="form-text">
+                            Optional
+                        </div>
+
+                    </div>
+
+
+                    <!-- Description -->
+                    <div class="col-12">
+
+                        <label
+                            for="description"
+                            class="form-label"
+                        >
+                            Description
+                        </label>
+
+                        <textarea
+                            class="form-control"
+                            id="description"
+                            name="description"
+                            rows="4"
+                            maxlength="200"
+                            placeholder="Brief description of the disease"
+                        ></textarea>
+
+                        <div class="form-text">
+                            Maximum 200 characters.
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <hr class="my-4">
+
+
+                <div class="d-flex justify-content-end gap-2">
+
+                    <a
+                        href="{{ url_for('main.diseases') }}"
+                        class="btn btn-outline-secondary"
+                    >
+                        Cancel
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-dark"
+                    >
+                        <i class="bi bi-plus-circle"></i>
+                        Add Disease
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

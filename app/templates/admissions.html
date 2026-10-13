@@ -1,0 +1,353 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+Admissions | Healthcare Intelligence Platform
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                Admission Management
+            </h2>
+
+            <p class="text-muted mb-0">
+                View and manage hospital patient admissions.
+            </p>
+        </div>
+
+        <!-- New Admission: Administrator and Receptionist Only -->
+        {% if current_user.role in ["administrator", "receptionist"] %}
+
+        <a
+            href="{{ url_for('main.add_admission') }}"
+            class="btn btn-dark"
+        >
+            <i class="bi bi-plus-circle"></i>
+            New Admission
+        </a>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- Statistics -->
+    <div class="row g-4 mb-4">
+
+        <!-- Total Admissions -->
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+                            <p class="text-muted mb-1">
+                                Total Admissions
+                            </p>
+
+                            <h3 class="fw-bold mb-0">
+                                {{ total_admissions }}
+                            </h3>
+                        </div>
+
+                        <div class="fs-1">
+                            <i class="bi bi-clipboard2-pulse"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- Active Admissions -->
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+                            <p class="text-muted mb-1">
+                                Active Admissions
+                            </p>
+
+                            <h3 class="fw-bold mb-0">
+                                {{ active_admissions }}
+                            </h3>
+                        </div>
+
+                        <div class="fs-1 text-success">
+                            <i class="bi bi-activity"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- Discharged Admissions -->
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+                            <p class="text-muted mb-1">
+                                Discharged
+                            </p>
+
+                            <h3 class="fw-bold mb-0">
+                                {{ discharged_admissions }}
+                            </h3>
+                        </div>
+
+                        <div class="fs-1">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Admissions Table -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-white border-0 pt-4 px-4">
+
+            <h5 class="fw-bold mb-1">
+                Admission Records
+            </h5>
+
+            <p class="text-muted mb-0">
+                Patient admission and discharge history.
+            </p>
+
+        </div>
+
+
+        <div class="card-body px-4">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Patient</th>
+                            <th>Doctor</th>
+                            <th>Department</th>
+                            <th>Disease</th>
+                            <th>Admission Date</th>
+                            <th>Type</th>
+                            <th>Room</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for admission in admissions %}
+
+                        <tr>
+
+                            <!-- Admission ID -->
+                            <td>
+                                #{{ admission.AdmissionID }}
+                            </td>
+
+
+                            <!-- Patient -->
+                            <td>
+
+                                <a
+                                    href="{{ url_for(
+                                        'main.patient_details',
+                                        patient_id=admission.PatientID
+                                    ) }}"
+                                    class="text-decoration-none fw-semibold"
+                                >
+                                    {{ admission.PatientName }}
+                                </a>
+
+                            </td>
+
+
+                            <!-- Doctor -->
+                            <td>
+
+                                <a
+                                    href="{{ url_for(
+                                        'main.doctor_details',
+                                        doctor_id=admission.DoctorID
+                                    ) }}"
+                                    class="text-decoration-none"
+                                >
+                                    {{ admission.DoctorName }}
+                                </a>
+
+                            </td>
+
+
+                            <!-- Department -->
+                            <td>
+                                {{ admission.DepartmentName }}
+                            </td>
+
+
+                            <!-- Disease -->
+                            <td>
+                                {{ admission.DiseaseName }}
+                            </td>
+
+
+                            <!-- Admission Date -->
+                            <td>
+                                {{ admission.AdmissionDate }}
+                            </td>
+
+
+                            <!-- Admission Type -->
+                            <td>
+
+                                <span class="badge bg-light text-dark border">
+                                    {{ admission.AdmissionType }}
+                                </span>
+
+                            </td>
+
+
+                            <!-- Room Number -->
+                            <td>
+
+                                {% if admission.RoomNumber %}
+
+                                    {{ admission.RoomNumber }}
+
+                                {% else %}
+
+                                    <span class="text-muted">
+                                        —
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- Admission Status -->
+                            <td>
+
+                                {% if admission.AdmissionStatus == "Active" %}
+
+                                    <span class="badge bg-success">
+                                        Active
+                                    </span>
+
+                                {% elif admission.AdmissionStatus == "Discharged" %}
+
+                                    <span class="badge bg-secondary">
+                                        Discharged
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        {{ admission.AdmissionStatus }}
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- Actions -->
+                            <td>
+
+                                <div class="d-flex gap-1">
+
+                                    <!-- View: All Authenticated Users -->
+                                    <a
+                                        href="{{ url_for(
+                                            'main.admission_details',
+                                            admission_id=admission.AdmissionID
+                                        ) }}"
+                                        class="btn btn-sm btn-outline-primary"
+                                        title="View Admission"
+                                    >
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+
+
+                                    <!-- Edit: Not Yet Implemented -->
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-outline-secondary"
+                                        disabled
+                                        title="Edit Admission - Not Available"
+                                    >
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+
+                        {% else %}
+
+                        <!-- No Admissions -->
+                        <tr>
+
+                            <td
+                                colspan="10"
+                                class="text-center text-muted py-5"
+                            >
+                                No admission records found.
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

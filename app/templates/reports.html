@@ -1,0 +1,1048 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- Page Header -->
+    <div class="mb-4">
+        <h2>Reports & Analytics</h2>
+        <p class="text-muted mb-0">
+            Healthcare operational and management insights.
+        </p>
+    </div>
+
+
+    <!-- Admissions Trend -->
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <h5 class="card-title">
+                Admissions Trend
+            </h5>
+
+            <p class="text-muted">
+                Number of patient admissions recorded each month.
+            </p>
+    <!-- Admissions Trend Chart -->
+<div class="mb-4" style="height: 320px;">
+
+    <canvas id="admissionsTrendChart"></canvas>
+
+</div>
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>Admissions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for row in admissions_trend %}
+
+                        <tr>
+                            <td>{{ row.Month }}</td>
+
+                            <td>
+                                <span class="badge bg-primary">
+                                    {{ row.AdmissionCount }}
+                                </span>
+                            </td>
+                        </tr>
+
+                        {% else %}
+
+                        <tr>
+                            <td colspan="2"
+                                class="text-center text-muted py-4">
+                                No admission data available.
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Disease Frequency -->
+<div class="card shadow-sm mt-4">
+
+    <div class="card-body">
+
+        <h5 class="card-title">
+            Most Common Diagnoses
+        </h5>
+
+        <p class="text-muted">
+            Number of admissions recorded for each disease.
+        </p>
+
+<!-- Disease Frequency Chart -->
+<div class="mb-4" style="height: 350px;">
+    <canvas id="diseaseFrequencyChart"></canvas>
+</div>
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead>
+                    <tr>
+                        <th>Disease</th>
+                        <th>Category</th>
+                        <th>Admissions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for row in disease_frequency %}
+
+                    <tr>
+                        <td>
+                            <strong>{{ row.DiseaseName }}</strong>
+                        </td>
+
+                        <td>
+                            {{ row.DiseaseCategory }}
+                        </td>
+
+                        <td>
+                            <span class="badge bg-primary">
+                                {{ row.AdmissionCount }}
+                            </span>
+                        </td>
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="3"
+                            class="text-center text-muted py-4">
+                            No disease data available.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Department Workload -->
+<div class="card shadow-sm mt-4">
+
+    <div class="card-body">
+
+        <h5 class="card-title">
+            Department Workload
+        </h5>
+
+        <p class="text-muted">
+            Admission workload by hospital department.
+        </p>
+
+<!-- Department Workload Chart -->
+<div class="mb-4" style="height: 350px;">
+    <canvas id="departmentWorkloadChart"></canvas>
+</div>
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead>
+                    <tr>
+                        <th>Department</th>
+                        <th>Total Admissions</th>
+                        <th>Active</th>
+                        <th>Discharged</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for row in department_workload %}
+
+                    <tr>
+                        <td>
+                            <strong>{{ row.DepartmentName }}</strong>
+                        </td>
+
+                        <td>
+                            <span class="badge bg-primary">
+                                {{ row.TotalAdmissions }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="badge bg-warning text-dark">
+                                {{ row.ActiveAdmissions }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="badge bg-success">
+                                {{ row.DischargedAdmissions }}
+                            </span>
+                        </td>
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="4"
+                            class="text-center text-muted py-4">
+                            No department data available.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Doctor Workload -->
+<div class="card shadow-sm mt-4">
+
+    <div class="card-body">
+
+        <h5 class="card-title">
+            Doctor Workload
+        </h5>
+
+        <p class="text-muted">
+            Admission workload handled by each doctor.
+        </p>
+
+<!-- Doctor Workload Chart -->
+<div class="mb-4" style="height: 420px;">
+    <canvas id="doctorWorkloadChart"></canvas>
+</div>
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead>
+                    <tr>
+                        <th>Doctor</th>
+                        <th>Specialization</th>
+                        <th>Department</th>
+                        <th>Total Admissions</th>
+                        <th>Active</th>
+                        <th>Discharged</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for row in doctor_workload %}
+
+                    <tr>
+                        <td>
+                            <strong>{{ row.DoctorName }}</strong>
+                        </td>
+
+                        <td>
+                            {{ row.Specialization }}
+                        </td>
+
+                        <td>
+                            {{ row.DepartmentName or "—" }}
+                        </td>
+
+                        <td>
+                            <span class="badge bg-primary">
+                                {{ row.TotalAdmissions }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="badge bg-warning text-dark">
+                                {{ row.ActiveAdmissions }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="badge bg-success">
+                                {{ row.DischargedAdmissions }}
+                            </span>
+                        </td>
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="6"
+                            class="text-center text-muted py-4">
+                            No doctor workload data available.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Treatment Cost Analysis -->
+<div class="card shadow-sm mt-4">
+
+    <div class="card-body">
+
+        <h5 class="card-title">
+            Treatment Cost Analysis
+        </h5>
+
+        <p class="text-muted">
+            Treatment frequency and associated treatment costs.
+        </p>
+
+<!-- Treatment Cost Analysis Chart -->
+<div class="mb-4" style="height: 450px;">
+    <canvas id="treatmentCostChart"></canvas>
+</div>
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead>
+                    <tr>
+                        <th>Treatment</th>
+                        <th>Number of Treatments</th>
+                        <th>Total Cost</th>
+                        <th>Average Cost</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for row in treatment_cost_analysis %}
+
+                    <tr>
+                        <td>
+                            <strong>{{ row.TreatmentType }}</strong>
+                        </td>
+
+                        <td>
+                            <span class="badge bg-primary">
+                                {{ row.TreatmentCount }}
+                            </span>
+                        </td>
+
+                        <td>
+                            Rs. {{ "{:,.2f}".format(row.TotalTreatmentCost) }}
+                        </td>
+
+                        <td>
+                            Rs. {{ "{:,.2f}".format(row.AverageTreatmentCost) }}
+                        </td>
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="4"
+                            class="text-center text-muted py-4">
+                            No treatment cost data available.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Financial Performance -->
+<div class="card shadow-sm mt-4">
+
+    <div class="card-body">
+
+        <h5 class="card-title">
+            Financial Performance
+        </h5>
+
+        <p class="text-muted">
+            Monthly billing, collections, and outstanding balances.
+        </p>
+
+<!-- Financial Performance Chart -->
+<div class="mb-4" style="height: 380px;">
+    <canvas id="financialPerformanceChart"></canvas>
+</div>
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Total Billed</th>
+                        <th>Total Collected</th>
+                        <th>Outstanding Balance</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for row in financial_performance %}
+
+                    <tr>
+                        <td>
+                            <strong>{{ row.Month }}</strong>
+                        </td>
+
+                        <td>
+                            Rs. {{ "{:,.2f}".format(row.TotalBilled) }}
+                        </td>
+
+                        <td>
+                            <span class="text-success">
+                                Rs. {{ "{:,.2f}".format(row.TotalCollected) }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {% if row.OutstandingBalance > 0 %}
+                                <span class="text-danger">
+                                    Rs. {{ "{:,.2f}".format(row.OutstandingBalance) }}
+                                </span>
+                            {% else %}
+                                <span class="text-success">
+                                    Rs. 0.00
+                                </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="4"
+                            class="text-center text-muted py-4">
+                            No financial data available.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Payment Method Analysis -->
+<div class="card shadow-sm mt-4">
+
+    <div class="card-body">
+
+        <h5 class="card-title">
+            Payment Method Analysis
+        </h5>
+
+        <p class="text-muted">
+            Collection performance by payment method.
+        </p>
+
+<!-- Payment Method Chart -->
+<div class="mb-4 mx-auto" style="height: 350px; max-width: 650px;">
+    <canvas id="paymentMethodChart"></canvas>
+</div>
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead>
+                    <tr>
+                        <th>Payment Method</th>
+                        <th>Number of Bills</th>
+                        <th>Total Collected</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for row in payment_method_analysis %}
+
+                    <tr>
+                        <td>
+                            <strong>{{ row.PaymentMethod }}</strong>
+                        </td>
+
+                        <td>
+                            <span class="badge bg-primary">
+                                {{ row.PaymentCount }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="text-success">
+                                Rs. {{ "{:,.2f}".format(row.TotalCollected) }}
+                            </span>
+                        </td>
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="3"
+                            class="text-center text-muted py-4">
+                            No payment method data available.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+
+    // ---------------------------------
+    // Admissions Trend Chart
+    // ---------------------------------
+
+    const admissionsLabels = [
+        {% for row in admissions_trend %}
+            "{{ row.Month }}"{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    const admissionsData = [
+        {% for row in admissions_trend %}
+            {{ row.AdmissionCount }}{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+
+    const admissionsCanvas =
+        document.getElementById("admissionsTrendChart");
+
+
+    if (admissionsCanvas) {
+
+        new Chart(
+            admissionsCanvas,
+            {
+                type: "line",
+
+                data: {
+                    labels: admissionsLabels,
+
+                    datasets: [
+                        {
+                            label: "Admissions",
+                            data: admissionsData,
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: false
+                        }
+                    ]
+                },
+
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+
+                    plugins: {
+                        legend: {
+                            display: true
+                        }
+                    },
+
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+
+                            ticks: {
+                                precision: 0
+                            }
+                        }
+                    }
+                }
+            }
+        );
+
+    }
+// ---------------------------------
+// Disease Frequency Chart
+// ---------------------------------
+
+const diseaseLabels = {{ disease_frequency
+    | map(attribute='DiseaseName')
+    | list
+    | tojson
+    | safe }};
+
+const diseaseData = {{ disease_frequency
+    | map(attribute='AdmissionCount')
+    | list
+    | tojson
+    | safe }};
+
+const diseaseCanvas =
+    document.getElementById("diseaseFrequencyChart");
+
+if (diseaseCanvas) {
+
+    new Chart(diseaseCanvas, {
+
+        type: "bar",
+
+        data: {
+            labels: diseaseLabels,
+
+            datasets: [{
+                label: "Admissions",
+                data: diseaseData,
+                borderWidth: 1
+            }]
+        },
+
+        options: {
+            indexAxis: "y",
+            responsive: true,
+            maintainAspectRatio: false,
+
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            }
+        }
+    });
+}
+
+// ---------------------------------
+// Department Workload Chart
+// ---------------------------------
+
+const departmentLabels = {{ department_workload
+    | map(attribute='DepartmentName')
+    | list
+    | tojson }};
+
+const departmentActive = {{ department_workload
+    | map(attribute='ActiveAdmissions')
+    | list
+    | tojson }};
+
+const departmentDischarged = {{ department_workload
+    | map(attribute='DischargedAdmissions')
+    | list
+    | tojson }};
+
+const departmentCanvas =
+    document.getElementById("departmentWorkloadChart");
+
+if (departmentCanvas) {
+
+    new Chart(departmentCanvas, {
+
+        type: "bar",
+
+        data: {
+            labels: departmentLabels,
+
+            datasets: [
+                {
+                    label: "Active",
+                    data: departmentActive,
+                    backgroundColor: "#f0ad4e"
+                },
+                {
+                    label: "Discharged",
+                    data: departmentDischarged,
+                    backgroundColor: "#198754"
+                }
+            ]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+                tooltip: {
+                    mode: "index",
+                    intersect: false
+                }
+            },
+
+            scales: {
+                x: {
+                    stacked: true
+                },
+
+                y: {
+                    stacked: true,
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            }
+        }
+    });
+}
+
+// ---------------------------------
+// Doctor Workload Chart
+// ---------------------------------
+
+const doctorLabels = {{ doctor_workload
+    | map(attribute='DoctorName')
+    | list
+    | tojson }};
+
+const doctorActive = {{ doctor_workload
+    | map(attribute='ActiveAdmissions')
+    | list
+    | tojson }};
+
+const doctorDischarged = {{ doctor_workload
+    | map(attribute='DischargedAdmissions')
+    | list
+    | tojson }};
+
+const doctorCanvas =
+    document.getElementById("doctorWorkloadChart");
+
+if (doctorCanvas) {
+
+    new Chart(doctorCanvas, {
+
+        type: "bar",
+
+        data: {
+            labels: doctorLabels,
+
+            datasets: [
+                {
+                    label: "Active",
+                    data: doctorActive,
+                    backgroundColor: "#f0ad4e"
+                },
+                {
+                    label: "Discharged",
+                    data: doctorDischarged,
+                    backgroundColor: "#198754"
+                }
+            ]
+        },
+
+        options: {
+            indexAxis: "y",
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+                tooltip: {
+                    mode: "index",
+                    intersect: false
+                }
+            },
+
+            scales: {
+                x: {
+                    stacked: true,
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                },
+
+                y: {
+                    stacked: true
+                }
+            }
+        }
+    });
+}
+
+// ---------------------------------
+// Treatment Cost Analysis Chart
+// ---------------------------------
+
+const treatmentLabels = {{ treatment_cost_analysis
+    | map(attribute='TreatmentType')
+    | list
+    | tojson }};
+
+const treatmentTotalCosts = {{ treatment_cost_analysis
+    | map(attribute='TotalTreatmentCost')
+    | map('float')
+    | list
+    | tojson }};
+
+const treatmentCanvas =
+    document.getElementById("treatmentCostChart");
+
+if (treatmentCanvas) {
+
+    new Chart(treatmentCanvas, {
+
+        type: "bar",
+
+        data: {
+            labels: treatmentLabels,
+
+            datasets: [{
+                label: "Total Treatment Cost (Rs.)",
+                data: treatmentTotalCosts,
+                backgroundColor: "#0d6efd",
+                borderWidth: 1
+            }]
+        },
+
+        options: {
+            indexAxis: "y",
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return "Rs. " +
+                                context.parsed.x.toLocaleString();
+                        }
+                    }
+                }
+            },
+
+            scales: {
+                x: {
+                    beginAtZero: true,
+
+                    ticks: {
+                        callback: function(value) {
+                            return "Rs. " +
+                                Number(value).toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// ---------------------------------
+// Financial Performance Chart
+// ---------------------------------
+
+const financialLabels = {{ financial_performance
+    | map(attribute='Month')
+    | list
+    | tojson }};
+
+const financialBilled = {{ financial_performance
+    | map(attribute='TotalBilled')
+    | map('float')
+    | list
+    | tojson }};
+
+const financialCollected = {{ financial_performance
+    | map(attribute='TotalCollected')
+    | map('float')
+    | list
+    | tojson }};
+
+const financialOutstanding = {{ financial_performance
+    | map(attribute='OutstandingBalance')
+    | map('float')
+    | list
+    | tojson }};
+
+const financialCanvas =
+    document.getElementById("financialPerformanceChart");
+
+if (financialCanvas) {
+
+    new Chart(financialCanvas, {
+
+        type: "bar",
+
+        data: {
+            labels: financialLabels,
+
+            datasets: [
+                {
+                    label: "Total Billed",
+                    data: financialBilled,
+                    backgroundColor: "#0d6efd"
+                },
+                {
+                    label: "Total Collected",
+                    data: financialCollected,
+                    backgroundColor: "#198754"
+                },
+                {
+                    label: "Outstanding Balance",
+                    data: financialOutstanding,
+                    backgroundColor: "#dc3545"
+                }
+            ]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.dataset.label + ": Rs. " +
+                                context.parsed.y.toLocaleString();
+                        }
+                    }
+                }
+            },
+
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return "Rs. " +
+                                Number(value).toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// ---------------------------------
+// Payment Method Analysis Chart
+// ---------------------------------
+
+const paymentMethodLabels = {{ payment_method_analysis
+    | map(attribute='PaymentMethod')
+    | list
+    | tojson }};
+
+const paymentMethodCollected = {{ payment_method_analysis
+    | map(attribute='TotalCollected')
+    | map('float')
+    | list
+    | tojson }};
+
+const paymentMethodCanvas =
+    document.getElementById("paymentMethodChart");
+
+if (paymentMethodCanvas) {
+
+    new Chart(paymentMethodCanvas, {
+
+        type: "doughnut",
+
+        data: {
+            labels: paymentMethodLabels,
+
+            datasets: [{
+                label: "Total Collected (Rs.)",
+                data: paymentMethodCollected,
+                backgroundColor: [
+                    "#0d6efd",
+                    "#198754",
+                    "#ffc107",
+                    "#6c757d"
+                ],
+                borderWidth: 2
+            }]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+                legend: {
+                    position: "bottom"
+                },
+
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.label + ": Rs. " +
+                                context.parsed.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+</script>
+
+{% endblock %}

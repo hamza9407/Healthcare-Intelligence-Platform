@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edit {{ department.DepartmentName }} | Healthcare Intelligence Platform
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="mb-4">
+        <h2 class="fw-bold mb-1">
+            Edit Department
+        </h2>
+
+        <p class="text-muted mb-0">
+            Update hospital department information.
+        </p>
+    </div>
+
+
+    <div class="row">
+
+        <div class="col-lg-8">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-header bg-white border-0 pt-4 px-4">
+
+                    <h5 class="fw-bold mb-1">
+                        {{ department.DepartmentName }}
+                    </h5>
+
+                    <p class="text-muted mb-0">
+                        Department ID: #{{ department.DepartmentID }}
+                    </p>
+
+                </div>
+
+
+                <div class="card-body p-4">
+
+                    <form method="POST">
+
+                        <div class="row g-4">
+
+                            <!-- Department Name -->
+                            <div class="col-md-6">
+
+                                <label
+                                    for="department_name"
+                                    class="form-label"
+                                >
+                                    Department Name *
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="department_name"
+                                    name="department_name"
+                                    value="{{ department.DepartmentName }}"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <!-- Location -->
+                            <div class="col-md-6">
+
+                                <label
+                                    for="location"
+                                    class="form-label"
+                                >
+                                    Location
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="location"
+                                    name="location"
+                                    value="{{ department.Location or '' }}"
+                                >
+
+                            </div>
+
+
+                            <!-- Contact Extension -->
+                            <div class="col-md-6">
+
+                                <label
+                                    for="contact_extension"
+                                    class="form-label"
+                                >
+                                    Contact Extension
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="contact_extension"
+                                    name="contact_extension"
+                                    value="{{ department.ContactExtension or '' }}"
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+
+                            <a
+                                href="{{ url_for(
+                                    'main.department_details',
+                                    department_id=department.DepartmentID
+                                ) }}"
+                                class="btn btn-outline-secondary"
+                            >
+                                <i class="bi bi-x-circle"></i>
+                                Cancel
+                            </a>
+
+
+                            <button
+                                type="submit"
+                                class="btn btn-dark"
+                            >
+                                <i class="bi bi-check-circle"></i>
+                                Save Changes
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

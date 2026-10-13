@@ -1,0 +1,362 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ doctor.DoctorName }} | Healthcare Intelligence Platform
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+                Doctor Profile
+            </h2>
+
+            <p class="text-muted mb-0">
+                Professional information and patient admission history.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{{ url_for('main.doctors') }}"
+            class="btn btn-outline-secondary"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Back to Doctors
+        </a>
+
+    </div>
+
+
+    <!-- Doctor Summary -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex align-items-center">
+
+                <div class="me-4">
+
+                    <div class="fs-1">
+                        <i class="bi bi-person-badge"></i>
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <h3 class="fw-bold mb-1">
+                        {{ doctor.DoctorName }}
+                    </h3>
+
+
+                    <p class="text-muted mb-2">
+                        Doctor ID: #{{ doctor.DoctorID }}
+                    </p>
+
+
+                    <span class="badge bg-primary me-1">
+                        {{ doctor.Specialization }}
+                    </span>
+
+
+                    {% if doctor.DepartmentName %}
+
+                    <span class="badge bg-dark">
+                        {{ doctor.DepartmentName }}
+                    </span>
+
+                    {% else %}
+
+                    <span class="badge bg-warning text-dark">
+                        Unassigned
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Professional Information -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-header bg-white border-0 pt-4 px-4">
+
+            <h5 class="fw-bold mb-0">
+                Professional Information
+            </h5>
+
+        </div>
+
+
+        <div class="card-body p-4">
+
+            <div class="row g-4">
+
+
+                <!-- License -->
+                <div class="col-md-4">
+
+                    <small class="text-muted">
+                        License Number
+                    </small>
+
+                    <p class="fw-semibold mb-0">
+                        {{ doctor.LicenseNo }}
+                    </p>
+
+                </div>
+
+
+                <!-- Specialization -->
+                <div class="col-md-4">
+
+                    <small class="text-muted">
+                        Specialization
+                    </small>
+
+                    <p class="fw-semibold mb-0">
+                        {{ doctor.Specialization }}
+                    </p>
+
+                </div>
+
+
+                <!-- Phone -->
+                <div class="col-md-4">
+
+                    <small class="text-muted">
+                        Phone Number
+                    </small>
+
+                    <p class="fw-semibold mb-0">
+                        {{ doctor.PhoneNumber or "Not provided" }}
+                    </p>
+
+                </div>
+
+
+                <!-- Department -->
+                <div class="col-md-4">
+
+                    <small class="text-muted">
+                        Department
+                    </small>
+
+                    <p class="fw-semibold mb-0">
+                        {{ doctor.DepartmentName or "Unassigned" }}
+                    </p>
+
+                </div>
+
+
+                <!-- Department Location -->
+                <div class="col-md-4">
+
+                    <small class="text-muted">
+                        Department Location
+                    </small>
+
+                    <p class="fw-semibold mb-0">
+                        {{ doctor.DepartmentLocation or "Not provided" }}
+                    </p>
+
+                </div>
+
+
+                <!-- Extension -->
+                <div class="col-md-4">
+
+                    <small class="text-muted">
+                        Department Extension
+                    </small>
+
+                    <p class="fw-semibold mb-0">
+                        {{ doctor.ContactExtension or "Not provided" }}
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Admission History -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-white border-0 pt-4 px-4">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+
+                    <h5 class="fw-bold mb-1">
+                        Patient Admission History
+                    </h5>
+
+                    <p class="text-muted mb-0">
+                        Admissions managed by this doctor.
+                    </p>
+
+                </div>
+
+
+                <span class="badge bg-primary fs-6">
+                    {{ admissions|length }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body px-4">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+
+                        <tr>
+                            <th>Admission</th>
+                            <th>Patient</th>
+                            <th>Disease</th>
+                            <th>Admission Date</th>
+                            <th>Discharge Date</th>
+                            <th>Type</th>
+                            <th>Room</th>
+                            <th>Status</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for admission in admissions %}
+
+                        <tr>
+
+                            <td>
+                                #{{ admission.AdmissionID }}
+                            </td>
+
+
+                            <td>
+
+                                <a
+                                    href="{{ url_for(
+                                        'main.patient_details',
+                                        patient_id=admission.PatientID
+                                    ) }}"
+                                    class="text-decoration-none fw-semibold"
+                                >
+                                    {{ admission.PatientName }}
+                                </a>
+
+                            </td>
+
+
+                            <td>
+                                {{ admission.DiseaseName or "—" }}
+                            </td>
+
+
+                            <td>
+                                {{ admission.AdmissionDate }}
+                            </td>
+
+
+                            <td>
+                                {{ admission.DischargeDate or "—" }}
+                            </td>
+
+
+                            <td>
+                                {{ admission.AdmissionType or "—" }}
+                            </td>
+
+
+                            <td>
+                                {{ admission.RoomNumber or "—" }}
+                            </td>
+
+
+                            <td>
+
+                                {% if admission.AdmissionStatus == "Active" %}
+
+                                <span class="badge bg-success">
+                                    Active
+                                </span>
+
+                                {% elif admission.AdmissionStatus == "Discharged" %}
+
+                                <span class="badge bg-secondary">
+                                    Discharged
+                                </span>
+
+                                {% else %}
+
+                                <span class="badge bg-warning text-dark">
+                                    {{ admission.AdmissionStatus }}
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+
+                        {% else %}
+
+                        <tr>
+
+                            <td
+                                colspan="8"
+                                class="text-center text-muted py-5"
+                            >
+
+                                <i class="bi bi-clipboard-x fs-3 d-block mb-2"></i>
+
+                                No admission records found for this doctor.
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

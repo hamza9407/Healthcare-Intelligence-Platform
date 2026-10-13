@@ -1,0 +1,305 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edit Treatment | Healthcare Intelligence Platform
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+                Edit Treatment
+            </h2>
+
+            <p class="text-muted mb-0">
+                Treatment #{{ treatment.TreatmentID }}
+                for {{ treatment.PatientName }}
+            </p>
+
+        </div>
+
+
+        <a
+            href="{{ url_for(
+                'main.treatment_details',
+                treatment_id=treatment.TreatmentID
+            ) }}"
+            class="btn btn-outline-secondary"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Back
+        </a>
+
+    </div>
+
+
+    <!-- Admission Information -->
+    <div class="alert alert-light border">
+
+        <div class="row">
+
+            <div class="col-md-4">
+
+                <small class="text-muted">
+                    Patient
+                </small>
+
+                <div class="fw-semibold">
+                    {{ treatment.PatientName }}
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <small class="text-muted">
+                    Admission
+                </small>
+
+                <div class="fw-semibold">
+                    #{{ treatment.AdmissionID }}
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <small class="text-muted">
+                    Admission Date
+                </small>
+
+                <div class="fw-semibold">
+                    {{ treatment.AdmissionDate }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Edit Form -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-white border-0 pt-4 px-4">
+
+            <h5 class="fw-bold mb-1">
+                Treatment Information
+            </h5>
+
+            <p class="text-muted mb-0">
+                Update the treatment record below.
+            </p>
+
+        </div>
+
+
+        <div class="card-body p-4">
+
+            <form method="POST">
+
+                <div class="row g-4">
+
+
+                    <!-- Treatment Date -->
+                    <div class="col-md-6">
+
+                        <label
+                            for="treatment_date"
+                            class="form-label"
+                        >
+                            Treatment Date *
+                        </label>
+
+                        <input
+                            type="date"
+                            class="form-control"
+                            id="treatment_date"
+                            name="treatment_date"
+                            value="{{ treatment.TreatmentDate }}"
+                            min="{{ treatment.AdmissionDate }}"
+                            {% if treatment.DischargeDate %}
+                            max="{{ treatment.DischargeDate }}"
+                            {% endif %}
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Treatment Type -->
+                    <div class="col-md-6">
+
+                        <label
+                            for="treatment_type"
+                            class="form-label"
+                        >
+                            Treatment Type *
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="treatment_type"
+                            name="treatment_type"
+                            value="{{ treatment.TreatmentType }}"
+                            maxlength="100"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Medicine Details -->
+                    <div class="col-12">
+
+                        <label
+                            for="medicine_details"
+                            class="form-label"
+                        >
+                            Medicine / Treatment Details
+                        </label>
+
+                        <textarea
+                            class="form-control"
+                            id="medicine_details"
+                            name="medicine_details"
+                            rows="3"
+                            maxlength="200"
+                        >{{ treatment.MedicineDetails or '' }}</textarea>
+
+                    </div>
+
+
+                    <!-- Outcome -->
+                    <div class="col-md-6">
+
+                        <label
+                            for="treatment_outcome"
+                            class="form-label"
+                        >
+                            Treatment Outcome
+                        </label>
+
+                        <select
+                            class="form-select"
+                            id="treatment_outcome"
+                            name="treatment_outcome"
+                        >
+
+                            <option value="">
+                                Not Recorded
+                            </option>
+
+                            <option
+                                value="Under Treatment"
+                                {% if treatment.TreatmentOutcome == "Under Treatment" %}
+                                selected
+                                {% endif %}
+                            >
+                                Under Treatment
+                            </option>
+
+                            <option
+                                value="Improved"
+                                {% if treatment.TreatmentOutcome == "Improved" %}
+                                selected
+                                {% endif %}
+                            >
+                                Improved
+                            </option>
+
+                            <option
+                                value="Recovered"
+                                {% if treatment.TreatmentOutcome == "Recovered" %}
+                                selected
+                                {% endif %}
+                            >
+                                Recovered
+                            </option>
+
+                            <option
+                                value="No Improvement"
+                                {% if treatment.TreatmentOutcome == "No Improvement" %}
+                                selected
+                                {% endif %}
+                            >
+                                No Improvement
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Treatment Cost -->
+                    <div class="col-md-6">
+
+                        <label
+                            for="treatment_cost"
+                            class="form-label"
+                        >
+                            Treatment Cost (Rs.) *
+                        </label>
+
+                        <input
+                            type="number"
+                            class="form-control"
+                            id="treatment_cost"
+                            name="treatment_cost"
+                            value="{{ treatment.TreatmentCost }}"
+                            min="0"
+                            step="0.01"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <hr class="my-4">
+
+
+                <div class="d-flex justify-content-end gap-2">
+
+                    <a
+                        href="{{ url_for(
+                            'main.treatment_details',
+                            treatment_id=treatment.TreatmentID
+                        ) }}"
+                        class="btn btn-outline-secondary"
+                    >
+                        Cancel
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-dark"
+                    >
+                        <i class="bi bi-check-circle"></i>
+                        Save Changes
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

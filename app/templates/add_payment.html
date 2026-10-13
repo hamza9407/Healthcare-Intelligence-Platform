@@ -1,0 +1,341 @@
+{% extends "base.html" %}
+
+{% block title %}
+Add Payment | Healthcare Intelligence Platform
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                Add Payment
+            </h2>
+
+            <p class="text-muted mb-0">
+                Record billing information for Admission
+                #{{ admission.AdmissionID }}.
+            </p>
+        </div>
+
+        <a
+            href="{{ url_for(
+                'main.admission_details',
+                admission_id=admission.AdmissionID
+            ) }}"
+            class="btn btn-outline-secondary"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Back to Admission
+        </a>
+
+    </div>
+
+
+    <!-- Admission Summary -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="row g-4">
+
+                <div class="col-md-3">
+                    <small class="text-muted">Patient</small>
+                    <p class="fw-semibold mb-0">
+                        {{ admission.PatientName }}
+                    </p>
+                </div>
+
+                <div class="col-md-3">
+                    <small class="text-muted">Doctor</small>
+                    <p class="fw-semibold mb-0">
+                        {{ admission.DoctorName }}
+                    </p>
+                </div>
+
+                <div class="col-md-3">
+                    <small class="text-muted">Department</small>
+                    <p class="fw-semibold mb-0">
+                        {{ admission.DepartmentName }}
+                    </p>
+                </div>
+
+                <div class="col-md-3">
+                    <small class="text-muted">Diagnosis</small>
+                    <p class="fw-semibold mb-0">
+                        {{ admission.DiseaseName }}
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Financial Reference -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Treatment Cost
+                    </p>
+
+                    <h4 class="fw-bold mb-0">
+                        Rs.
+                        {{ "{:,.2f}".format(treatment_total) }}
+                    </h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Previously Billed
+                    </p>
+
+                    <h4 class="fw-bold mb-0">
+                        Rs.
+                        {{ "{:,.2f}".format(
+                            existing_payments.TotalBilled
+                        ) }}
+                    </h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Previously Paid
+                    </p>
+
+                    <h4 class="fw-bold mb-0">
+                        Rs.
+                        {{ "{:,.2f}".format(
+                            existing_payments.TotalPaid
+                        ) }}
+                    </h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Payment Form -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-white border-0 pt-4 px-4">
+
+            <h5 class="fw-bold mb-1">
+                Payment Information
+            </h5>
+
+            <p class="text-muted mb-0">
+                Enter the billing and payment details.
+            </p>
+
+        </div>
+
+
+        <div class="card-body p-4">
+
+            <form method="POST">
+
+                <div class="row g-4">
+
+
+                    <!-- Payment Date -->
+                    <div class="col-md-6">
+
+                        <label
+                            for="payment_date"
+                            class="form-label"
+                        >
+                            Payment Date *
+                        </label>
+
+                        <input
+                            type="date"
+                            class="form-control"
+                            id="payment_date"
+                            name="payment_date"
+                            min="{{ admission.AdmissionDate }}"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Payment Method -->
+                    <div class="col-md-6">
+
+                        <label
+                            for="payment_method"
+                            class="form-label"
+                        >
+                            Payment Method
+                        </label>
+
+                        <select
+                            class="form-select"
+                            id="payment_method"
+                            name="payment_method"
+                        >
+
+                            <option value="">
+                                Select Payment Method
+                            </option>
+
+                            <option value="Cash">
+                                Cash
+                            </option>
+
+                            <option value="Card">
+                                Card
+                            </option>
+
+                            <option value="Insurance">
+                                Insurance
+                            </option>
+
+                            <option value="Bank Transfer">
+                                Bank Transfer
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Total Amount -->
+                    <div class="col-md-6">
+
+                        <label
+                            for="total_amount"
+                            class="form-label"
+                        >
+                            Total Bill Amount (Rs.) *
+                        </label>
+
+                        <input
+                            type="number"
+                            class="form-control"
+                            id="total_amount"
+                            name="total_amount"
+                            min="0.01"
+                            step="0.01"
+                            value="{{ treatment_total }}"
+                            required
+                        >
+
+                        <div class="form-text">
+                            Treatment cost is provided as a reference.
+                            You may adjust the total bill if necessary.
+                        </div>
+
+                    </div>
+
+
+                    <!-- Amount Paid -->
+                    <div class="col-md-6">
+
+                        <label
+                            for="amount_paid"
+                            class="form-label"
+                        >
+                            Amount Paid (Rs.) *
+                        </label>
+
+                        <input
+                            type="number"
+                            class="form-control"
+                            id="amount_paid"
+                            name="amount_paid"
+                            min="0"
+                            step="0.01"
+                            value="0"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="alert alert-light border mt-4">
+
+                    <strong>Payment status is automatic:</strong>
+
+                    <div class="mt-2">
+                        Rs. 0 paid → Pending<br>
+                        Partial payment → Partial<br>
+                        Full payment → Paid
+                    </div>
+
+                </div>
+
+
+                <div class="d-flex justify-content-end gap-2">
+
+                    <a
+                        href="{{ url_for(
+                            'main.admission_details',
+                            admission_id=admission.AdmissionID
+                        ) }}"
+                        class="btn btn-outline-secondary"
+                    >
+                        Cancel
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="btn btn-dark"
+                    >
+                        <i class="bi bi-cash-stack"></i>
+                        Add Payment
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

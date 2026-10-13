@@ -1,0 +1,313 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}
+        Healthcare Intelligence Platform
+        {% endblock %}
+    </title>
+
+    <!-- Bootstrap CSS -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Custom CSS -->
+    <link
+        href="{{ url_for('static', filename='css/style.css') }}"
+        rel="stylesheet"
+    >
+</head>
+
+<body>
+
+    <!-- ============================== -->
+    <!-- TOP NAVIGATION                 -->
+    <!-- ============================== -->
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+        <div class="container-fluid">
+
+            <!-- Brand -->
+            <a class="navbar-brand fw-bold"
+               href="{{ url_for('main.dashboard') }}">
+
+                <i class="bi bi-hospital"></i>
+                Healthcare Intelligence
+
+            </a>
+
+            <!-- Mobile Menu Button -->
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav"
+                aria-controls="navbarNav"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+            >
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navigation Links -->
+            <div class="collapse navbar-collapse"
+                 id="navbarNav">
+
+                <ul class="navbar-nav ms-auto align-items-lg-center">
+
+                    <!-- Dashboard -->
+                    <li class="nav-item">
+                        <a
+                            class="nav-link {% if request.endpoint == 'main.dashboard' %}active{% endif %}"
+                            href="{{ url_for('main.dashboard') }}"
+                        >
+                            <i class="bi bi-speedometer2"></i>
+                            Dashboard
+                        </a>
+                    </li>
+
+                    <!-- Patients -->
+                    <li class="nav-item">
+                        <a
+                            class="nav-link {% if request.endpoint in [
+                                'main.patients',
+                                'main.add_patient',
+                                'main.patient_details',
+                                'main.edit_patient'
+                            ] %}active{% endif %}"
+                            href="{{ url_for('main.patients') }}"
+                        >
+                            <i class="bi bi-people"></i>
+                            Patients
+                        </a>
+                    </li>
+
+                    <!-- Departments -->
+                    <li class="nav-item">
+                        <a
+                            class="nav-link {% if request.endpoint in [
+                                'main.departments',
+                                'main.add_department',
+                                'main.department_details',
+                                'main.edit_department'
+                            ] %}active{% endif %}"
+                            href="{{ url_for('main.departments') }}"
+                        >
+                            <i class="bi bi-building"></i>
+                            Departments
+                        </a>
+                    </li>
+
+                    <!-- Diseases -->
+                    <li class="nav-item">
+                        <a
+                            class="nav-link {% if request.endpoint in [
+                                'main.diseases',
+                                'main.add_disease',
+                                'main.disease_details',
+                                'main.edit_disease'
+                            ] %}active{% endif %}"
+                            href="{{ url_for('main.diseases') }}"
+                        >
+                            <i class="bi bi-virus"></i>
+                            Diseases
+                        </a>
+                    </li>
+
+                    <!-- Doctors -->
+                    <li class="nav-item">
+                        <a
+                            class="nav-link {% if request.endpoint in [
+                                'main.doctors',
+                                'main.add_doctor',
+                                'main.doctor_details',
+                                'main.edit_doctor'
+                            ] %}active{% endif %}"
+                            href="{{ url_for('main.doctors') }}"
+                        >
+                            <i class="bi bi-person-badge"></i>
+                            Doctors
+                        </a>
+                    </li>
+
+                    <!-- Admissions -->
+                    <li class="nav-item">
+                        <a
+                            class="nav-link {% if request.endpoint in [
+                                'main.admissions',
+                                'main.add_admission',
+                                'main.admission_details',
+                                'main.discharge_admission',
+                                'main.add_treatment'
+                            ] %}active{% endif %}"
+                            href="{{ url_for('main.admissions') }}"
+                        >
+                            <i class="bi bi-clipboard2-pulse"></i>
+                            Admissions
+                        </a>
+                    </li>
+
+                    <!-- Treatments -->
+                    <li class="nav-item">
+                        <a
+                            class="nav-link {% if request.endpoint in [
+                                'main.treatments',
+                                'main.treatment_details',
+                                'main.edit_treatment'
+                            ] %}active{% endif %}"
+                            href="{{ url_for('main.treatments') }}"
+                        >
+                            <i class="bi bi-capsule"></i>
+                            Treatments
+                        </a>
+                    </li>
+{% if current_user.is_authenticated and current_user.role in ["administrator", "receptionist"] %}
+
+                    <!-- Payments -->
+                    <li class="nav-item">
+                        <a
+                            class="nav-link {% if request.endpoint in [
+                                'main.payments',
+                                'main.add_payment',
+                                'main.record_payment'
+                            ] %}active{% endif %}"
+                            href="{{ url_for('main.payments') }}"
+                        >
+                            <i class="bi bi-cash-stack"></i>
+                            Payments
+                        </a>
+                    </li>
+                    {% endif %}
+{% if current_user.is_authenticated and current_user.role == "administrator" %}
+                    <!-- Reports & Analytics -->
+                    <li class="nav-item">
+                        <a
+                            class="nav-link {% if request.endpoint == 'main.reports' %}active{% endif %}"
+                            href="{{ url_for('main.reports') }}"
+                        >
+                            <i class="bi bi-bar-chart-line"></i>
+                            Reports
+                        </a>
+                    </li>
+{% endif %}
+                    <!-- Authenticated User and Logout -->
+                    {% if current_user.is_authenticated %}
+
+                    <li class="nav-item ms-lg-3">
+                        <span class="navbar-text text-light small">
+                            <i class="bi bi-person-circle"></i>
+                            {{ current_user.username }}
+                        </span>
+                    </li>
+
+                    <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
+
+                        <form
+                            action="{{ url_for('auth.logout') }}"
+                            method="POST"
+                            class="d-flex"
+                        >
+                            <button
+                                type="submit"
+                                class="btn btn-outline-danger btn-sm"
+                            >
+                                <i class="bi bi-box-arrow-right"></i>
+                                Logout
+                            </button>
+                        </form>
+
+                    </li>
+
+                    {% endif %}
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <!-- ============================== -->
+    <!-- MAIN CONTENT                   -->
+    <!-- ============================== -->
+
+    <main class="container-fluid py-4">
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <div
+                        class="alert alert-{{ category }} alert-dismissible fade show"
+                        role="alert"
+                    >
+                        {{ message }}
+
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="alert"
+                            aria-label="Close"
+                        ></button>
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <!-- Page Content -->
+        {% block content %}
+        {% endblock %}
+
+    </main>
+
+
+    <!-- ============================== -->
+    <!-- JAVASCRIPT                     -->
+    <!-- ============================== -->
+
+    <!-- Bootstrap JavaScript -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+    <!-- Chart.js -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/chart.js">
+    </script>
+
+    <!-- Custom JavaScript -->
+    <script
+        src="{{ url_for('static', filename='js/main.js') }}">
+    </script>
+
+    <!-- Page-Specific JavaScript -->
+    {% block scripts %}
+    {% endblock %}
+
+</body>
+</html>

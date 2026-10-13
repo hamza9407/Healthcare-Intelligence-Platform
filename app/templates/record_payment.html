@@ -1,0 +1,294 @@
+{% extends "base.html" %}
+
+{% block title %}
+Record Payment | Healthcare Intelligence Platform
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+                Record Payment
+            </h2>
+
+            <p class="text-muted mb-0">
+                Record an additional payment against
+                Bill #{{ payment.PaymentID }}.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{{ url_for(
+                'main.admission_details',
+                admission_id=payment.AdmissionID
+            ) }}"
+            class="btn btn-outline-secondary"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Back
+        </a>
+
+    </div>
+
+
+    <!-- Bill Summary -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Patient
+                    </small>
+
+                    <h5 class="fw-bold mb-0">
+                        {{ payment.PatientName }}
+                    </h5>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Total Bill
+                    </small>
+
+                    <h5 class="fw-bold mb-0">
+                        Rs.
+                        {{ "{:,.2f}".format(
+                            payment.TotalAmount
+                        ) }}
+                    </h5>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Paid So Far
+                    </small>
+
+                    <h5 class="fw-bold mb-0">
+                        Rs.
+                        {{ "{:,.2f}".format(
+                            payment.AmountPaid
+                        ) }}
+                    </h5>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Outstanding
+                    </small>
+
+                    <h5 class="fw-bold mb-0">
+                        Rs.
+                        {{ "{:,.2f}".format(
+                            outstanding_balance
+                        ) }}
+                    </h5>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Payment Form -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-white border-0 pt-4 px-4">
+
+            <h5 class="fw-bold mb-1">
+                Payment Details
+            </h5>
+
+            <p class="text-muted mb-0">
+                Enter the amount received from the patient.
+            </p>
+
+        </div>
+
+
+        <div class="card-body p-4">
+
+            <form method="POST">
+
+                <div class="row g-4">
+
+
+                    <!-- Amount -->
+                    <div class="col-md-4">
+
+                        <label
+                            for="additional_amount"
+                            class="form-label"
+                        >
+                            Amount Received (Rs.) *
+                        </label>
+
+                        <input
+                            type="number"
+                            class="form-control"
+                            id="additional_amount"
+                            name="additional_amount"
+                            min="0.01"
+                            max="{{ outstanding_balance }}"
+                            step="0.01"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Date -->
+                    <div class="col-md-4">
+
+                        <label
+                            for="payment_date"
+                            class="form-label"
+                        >
+                            Payment Date *
+                        </label>
+
+                        <input
+                            type="date"
+                            class="form-control"
+                            id="payment_date"
+                            name="payment_date"
+                            min="{{ payment.AdmissionDate }}"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Method -->
+                    <div class="col-md-4">
+
+                        <label
+                            for="payment_method"
+                            class="form-label"
+                        >
+                            Payment Method
+                        </label>
+
+                        <select
+                            class="form-select"
+                            id="payment_method"
+                            name="payment_method"
+                        >
+
+                            <option value="">
+                                Keep Existing Method
+                            </option>
+
+                            <option value="Cash">
+                                Cash
+                            </option>
+
+                            <option value="Card">
+                                Card
+                            </option>
+
+                            <option value="Insurance">
+                                Insurance
+                            </option>
+
+                            <option value="Bank Transfer">
+                                Bank Transfer
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <div class="alert alert-info mt-4">
+
+                    <i class="bi bi-info-circle me-1"></i>
+
+                    This payment will reduce the outstanding
+                    balance. It will <strong>not create another
+                    bill</strong>.
+
+                </div>
+
+
+                <div class="d-flex justify-content-end gap-2">
+
+                    <a
+                        href="{{ url_for(
+                            'main.admission_details',
+                            admission_id=payment.AdmissionID
+                        ) }}"
+                        class="btn btn-outline-secondary"
+                    >
+                        Cancel
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-dark"
+                    >
+                        <i class="bi bi-cash-coin"></i>
+                        Record Payment
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

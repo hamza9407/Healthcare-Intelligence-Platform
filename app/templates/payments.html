@@ -1,0 +1,511 @@
+{% extends "base.html" %}
+
+{% block title %}
+Payments | Healthcare Intelligence Platform
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="mb-4">
+
+        <h2 class="fw-bold mb-1">
+            Payment Management
+        </h2>
+
+        <p class="text-muted mb-0">
+            Monitor hospital billing, collections and outstanding balances.
+        </p>
+
+    </div>
+
+
+    <!-- Financial Summary -->
+    <div class="row g-4 mb-4">
+
+        <!-- Total Billed -->
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <p class="text-muted mb-1">
+                                Total Billed
+                            </p>
+
+                            <h3 class="fw-bold mb-0">
+                                Rs.
+                                {{ "{:,.2f}".format(
+                                    summary.TotalBilled
+                                ) }}
+                            </h3>
+
+                        </div>
+
+                        <div class="fs-1">
+                            <i class="bi bi-receipt"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Total Collected -->
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <p class="text-muted mb-1">
+                                Total Collected
+                            </p>
+
+                            <h3 class="fw-bold mb-0">
+                                Rs.
+                                {{ "{:,.2f}".format(
+                                    summary.TotalCollected
+                                ) }}
+                            </h3>
+
+                        </div>
+
+                        <div class="fs-1">
+                            <i class="bi bi-cash-coin"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Outstanding -->
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <p class="text-muted mb-1">
+                                Outstanding Balance
+                            </p>
+
+                            <h3 class="fw-bold mb-0">
+                                Rs.
+                                {{ "{:,.2f}".format(
+                                    summary.OutstandingBalance
+                                ) }}
+                            </h3>
+
+                        </div>
+
+                        <div class="fs-1">
+                            <i class="bi bi-wallet2"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Status Cards -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Paid Bills
+                    </p>
+
+                    <h4 class="fw-bold mb-0">
+                        {{ status_counts.PaidCount or 0 }}
+                    </h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Partial Bills
+                    </p>
+
+                    <h4 class="fw-bold mb-0">
+                        {{ status_counts.PartialCount or 0 }}
+                    </h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Pending Bills
+                    </p>
+
+                    <h4 class="fw-bold mb-0">
+                        {{ status_counts.PendingCount or 0 }}
+                    </h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Payment Records -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-white border-0 pt-4 px-4">
+
+            <div
+                class="d-flex justify-content-between align-items-center"
+            >
+
+                <div>
+
+                    <h5 class="fw-bold mb-1">
+                        Payment Records
+                    </h5>
+
+                    <p class="text-muted mb-0">
+                        Total records: {{ payments|length }}
+                    </p>
+
+                </div>
+
+
+                <!-- Search -->
+                <div style="max-width: 300px; width: 100%;">
+
+                    <input
+                        type="text"
+                        id="paymentSearch"
+                        class="form-control"
+                        placeholder="Search payments..."
+                    >
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body px-4">
+
+            <div class="table-responsive">
+
+                <table
+                    class="table table-hover align-middle"
+                    id="paymentTable"
+                >
+
+                    <thead>
+
+                        <tr>
+                            <th>Payment</th>
+                            <th>Admission</th>
+                            <th>Patient</th>
+                            <th>Department</th>
+                            <th>Date</th>
+                            <th>Total</th>
+                            <th>Paid</th>
+                            <th>Outstanding</th>
+                            <th>Method</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for payment in payments %}
+
+                        <tr>
+
+                            <td>
+                                #{{ payment.PaymentID }}
+                            </td>
+
+
+                            <td>
+
+                                <a
+                                    href="{{ url_for(
+                                        'main.admission_details',
+                                        admission_id=payment.AdmissionID
+                                    ) }}"
+                                    class="text-decoration-none"
+                                >
+                                    #{{ payment.AdmissionID }}
+                                </a>
+
+                            </td>
+
+
+                            <td>
+
+                                <a
+                                    href="{{ url_for(
+                                        'main.patient_details',
+                                        patient_id=payment.PatientID
+                                    ) }}"
+                                    class="text-decoration-none fw-semibold"
+                                >
+                                    {{ payment.PatientName }}
+                                </a>
+
+                            </td>
+
+
+                            <td>
+                                {{ payment.DepartmentName }}
+                            </td>
+
+
+                            <td>
+                                {{ payment.PaymentDate }}
+                            </td>
+
+
+                            <td>
+                                Rs.
+                                {{ "{:,.2f}".format(
+                                    payment.TotalAmount
+                                ) }}
+                            </td>
+
+
+                            <td>
+                                Rs.
+                                {{ "{:,.2f}".format(
+                                    payment.AmountPaid
+                                ) }}
+                            </td>
+
+
+                            <td>
+                                Rs.
+                                {{ "{:,.2f}".format(
+                                    payment.TotalAmount
+                                    - payment.AmountPaid
+                                ) }}
+                            </td>
+
+
+                            <td>
+                                {{ payment.PaymentMethod or "—" }}
+                            </td>
+
+
+                            <td>
+
+                                {% if payment.PaymentStatus == "Paid" %}
+
+                                <span class="badge bg-success">
+                                    Paid
+                                </span>
+
+
+                                {% elif payment.PaymentStatus == "Partial" %}
+
+                                <span class="badge bg-warning text-dark">
+                                    Partial
+                                </span>
+
+
+                                {% elif payment.PaymentStatus == "Pending" %}
+
+                                <span class="badge bg-danger">
+                                    Pending
+                                </span>
+
+
+                                {% else %}
+
+                                <span class="badge bg-secondary">
+                                    {{ payment.PaymentStatus }}
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                {% if payment.AmountPaid
+                                      < payment.TotalAmount %}
+
+                                <a
+                                    href="{{ url_for(
+                                        'main.record_payment',
+                                        payment_id=payment.PaymentID
+                                    ) }}"
+                                    class="btn btn-sm btn-outline-success"
+                                    title="Pay Balance"
+                                >
+                                    <i class="bi bi-cash-coin"></i>
+                                </a>
+
+                                {% else %}
+
+                                <span class="text-success">
+                                    <i class="bi bi-check-circle"></i>
+                                </span>
+
+                                {% endif %}
+
+
+                                <a
+                                    href="{{ url_for(
+                                        'main.admission_details',
+                                        admission_id=payment.AdmissionID
+                                    ) }}"
+                                    class="btn btn-sm btn-outline-primary"
+                                    title="View Admission"
+                                >
+                                    <i class="bi bi-eye"></i>
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+
+                        {% else %}
+
+                        <tr>
+
+                            <td
+                                colspan="11"
+                                class="text-center text-muted py-4"
+                            >
+                                No payment records found.
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Search Script -->
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const searchInput =
+            document.getElementById("paymentSearch");
+
+        const table =
+            document.getElementById("paymentTable");
+
+        if (!searchInput || !table) {
+            return;
+        }
+
+        searchInput.addEventListener(
+            "keyup",
+            function () {
+
+                const filter =
+                    searchInput.value.toLowerCase();
+
+                const rows =
+                    table.querySelectorAll("tbody tr");
+
+                rows.forEach(
+                    function (row) {
+
+                        const text =
+                            row.textContent.toLowerCase();
+
+                        if (text.includes(filter)) {
+                            row.style.display = "";
+                        } else {
+                            row.style.display = "none";
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+    }
+);
+
+</script>
+
+{% endblock %}

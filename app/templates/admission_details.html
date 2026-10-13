@@ -1,0 +1,981 @@
+{% extends "base.html" %}
+
+{% block title %}
+
+Admission #{{ admission.AdmissionID }} | Healthcare Intelligence Platform
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- Header -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+
+                Admission Profile
+
+            </h2>
+
+            <p class="text-muted mb-0">
+
+                {% if current_user.role in ["administrator", "receptionist"] %}
+    Complete clinical, treatment and payment information.
+{% else %}
+    Complete clinical and treatment information.
+{% endif %}
+
+            </p>
+
+        </div>
+
+        <a
+
+            href="{{ url_for('main.admissions') }}"
+
+            class="btn btn-outline-secondary"
+
+        >
+
+            <i class="bi bi-arrow-left"></i>
+
+            Back to Admissions
+
+        </a>
+
+    </div>
+
+    <!-- Admission Summary -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+
+                    <h3 class="fw-bold mb-1">
+
+                        Admission #{{ admission.AdmissionID }}
+
+                    </h3>
+
+                    <p class="text-muted mb-2">
+
+                        {{ admission.PatientName }}
+
+                    </p>
+
+                    {% if admission.AdmissionStatus == "Active" %}
+
+                    <span class="badge bg-success">
+
+                        Active
+
+                    </span>
+
+                    {% elif admission.AdmissionStatus == "Discharged" %}
+
+                    <span class="badge bg-secondary">
+
+                        Discharged
+
+                    </span>
+
+                    {% else %}
+
+                    <span class="badge bg-warning text-dark">
+
+                        {{ admission.AdmissionStatus }}
+
+                    </span>
+
+                    {% endif %}
+
+                    <span class="badge bg-light text-dark border">
+
+                        {{ admission.AdmissionType }}
+
+                    </span>
+
+                </div>
+
+<div class="text-end">
+
+    <small class="text-muted">
+
+        Admission Date
+
+    </small>
+
+    <h5 class="fw-bold mb-3">
+
+        {{ admission.AdmissionDate }}
+
+    </h5>
+
+    {% if admission.AdmissionStatus == "Active" %}
+
+    {% if current_user.role in ["administrator", "doctor"] %}
+    <form method="POST"
+          action="{{ url_for('main.discharge_admission', admission_id=admission.AdmissionID) }}"
+          onsubmit="return confirm('Are you sure you want to discharge this patient?');">
+        <button type="submit" class="btn btn-danger">
+            <i class="bi bi-box-arrow-right"></i>
+            Discharge Patient
+        </button>
+    </form>
+    {% endif %}
+
+{% else %}
+
+    <span class="text-muted">
+
+        <i class="bi bi-check-circle"></i>
+
+        Discharged {{ admission.DischargeDate }}
+
+    </span>
+
+    {% endif %}
+
+</div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Admission Information -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-header bg-white border-0 pt-4 px-4">
+
+            <h5 class="fw-bold mb-0">
+
+                Admission Information
+
+            </h5>
+
+        </div>
+
+        <div class="card-body p-4">
+
+            <div class="row g-4">
+
+                <div class="col-md-3">
+
+                    <small class="text-muted">Admission Date</small>
+
+                    <p class="fw-semibold mb-0">
+
+                        {{ admission.AdmissionDate }}
+
+                    </p>
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <small class="text-muted">Discharge Date</small>
+
+                    <p class="fw-semibold mb-0">
+
+                        {{ admission.DischargeDate or "Not discharged" }}
+
+                    </p>
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <small class="text-muted">Admission Type</small>
+
+                    <p class="fw-semibold mb-0">
+
+                        {{ admission.AdmissionType }}
+
+                    </p>
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <small class="text-muted">Room Number</small>
+
+                    <p class="fw-semibold mb-0">
+
+                        {{ admission.RoomNumber or "Not assigned" }}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Patient / Doctor / Department / Disease -->
+
+    <div class="row g-4 mb-4">
+
+        <!-- Patient -->
+
+        <div class="col-lg-6">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-header bg-white border-0 pt-4 px-4">
+
+                    <h5 class="fw-bold mb-0">
+
+                        <i class="bi bi-person me-1"></i>
+
+                        Patient
+
+                    </h5>
+
+                </div>
+
+                <div class="card-body p-4">
+
+                    <h5 class="fw-bold">
+
+                        {{ admission.PatientName }}
+
+                    </h5>
+
+                    <p class="mb-1">
+
+                        <strong>CNIC:</strong>
+
+                        {{ admission.CNIC }}
+
+                    </p>
+
+                    <p class="mb-1">
+
+                        <strong>Gender:</strong>
+
+                        {{ admission.Gender }}
+
+                    </p>
+
+                    <p class="mb-1">
+
+                        <strong>Phone:</strong>
+
+                        {{ admission.PhoneNumber or "Not provided" }}
+
+                    </p>
+
+                    <p class="mb-3">
+
+                        <strong>Blood Group:</strong>
+
+                        {{ admission.BloodGroup or "Not provided" }}
+
+                    </p>
+
+                    <a
+
+                        href="{{ url_for(
+
+                            'main.patient_details',
+
+                            patient_id=admission.PatientID
+
+                        ) }}"
+
+                        class="btn btn-sm btn-outline-primary"
+
+                    >
+
+                        View Patient
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Doctor -->
+
+        <div class="col-lg-6">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-header bg-white border-0 pt-4 px-4">
+
+                    <h5 class="fw-bold mb-0">
+
+                        <i class="bi bi-person-badge me-1"></i>
+
+                        Doctor
+
+                    </h5>
+
+                </div>
+
+                <div class="card-body p-4">
+
+                    <h5 class="fw-bold">
+
+                        {{ admission.DoctorName }}
+
+                    </h5>
+
+                    <p class="mb-1">
+
+                        <strong>License:</strong>
+
+                        {{ admission.LicenseNo }}
+
+                    </p>
+
+                    <p class="mb-1">
+
+                        <strong>Specialization:</strong>
+
+                        {{ admission.Specialization }}
+
+                    </p>
+
+                    <p class="mb-1">
+
+                        <strong>Department:</strong>
+
+                        {{ admission.DepartmentName }}
+
+                    </p>
+
+                    <p class="mb-3">
+
+                        <strong>Location:</strong>
+
+                        {{ admission.DepartmentLocation or "Not provided" }}
+
+                    </p>
+
+                    <a
+
+                        href="{{ url_for(
+
+                            'main.doctor_details',
+
+                            doctor_id=admission.DoctorID
+
+                        ) }}"
+
+                        class="btn btn-sm btn-outline-primary"
+
+                    >
+
+                        View Doctor
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Diagnosis -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-header bg-white border-0 pt-4 px-4">
+
+            <h5 class="fw-bold mb-0">
+
+                <i class="bi bi-clipboard2-pulse me-1"></i>
+
+                Diagnosis
+
+            </h5>
+
+        </div>
+
+        <div class="card-body p-4">
+
+            <div class="row">
+
+                <div class="col-md-4">
+
+                    <small class="text-muted">
+
+                        Disease
+
+                    </small>
+
+                    <p class="fw-semibold mb-0">
+
+                        {{ admission.DiseaseName }}
+
+                    </p>
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <small class="text-muted">
+
+                        Category
+
+                    </small>
+
+                    <p class="fw-semibold mb-0">
+
+                        {{ admission.DiseaseCategory }}
+
+                    </p>
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <small class="text-muted">
+
+                        Description
+
+                    </small>
+
+                    <p class="fw-semibold mb-0">
+
+                        {{ admission.DiseaseDescription or "Not provided" }}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Treatment History -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-header bg-white border-0 pt-4 px-4">
+
+<div class="d-flex justify-content-between align-items-center">
+
+    <div>
+
+        <h5 class="fw-bold mb-1">
+
+            Treatment History
+
+        </h5>
+
+        <p class="text-muted mb-0">
+
+            Treatments recorded for this admission.
+
+        </p>
+
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+
+        <span class="badge bg-primary">
+
+            {{ treatments|length }}
+
+        </span>
+
+        {% if admission.AdmissionStatus == "Active" and current_user.role in ["administrator", "doctor"] %}
+
+        <a
+
+            href="{{ url_for(
+
+                'main.add_treatment',
+
+                admission_id=admission.AdmissionID
+
+            ) }}"
+
+            class="btn btn-sm btn-dark"
+
+        >
+
+            <i class="bi bi-plus-circle"></i>
+
+            Add Treatment
+
+        </a>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+        </div>
+
+        <div class="card-body px-4">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Date</th>
+
+                            <th>Treatment</th>
+
+                            <th>Medicine / Details</th>
+
+                            <th>Outcome</th>
+
+                            {% if current_user.role in ["administrator", "receptionist"] %}<th class="text-end">Cost</th>{% endif %}
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for treatment in treatments %}
+
+                        <tr>
+
+                            <td>
+
+                                {{ treatment.TreatmentDate }}
+
+                            </td>
+
+                            <td class="fw-semibold">
+
+                                {{ treatment.TreatmentType }}
+
+                            </td>
+
+                            <td>
+
+                                {{ treatment.MedicineDetails or "—" }}
+
+                            </td>
+
+                            <td>
+
+                                {{ treatment.TreatmentOutcome or "—" }}
+
+                            </td>
+
+                            {% if current_user.role in ["administrator", "receptionist"] %}
+<td class="text-end">
+
+                                Rs.
+
+                                {{ "{:,.2f}".format(
+
+                                    treatment.TreatmentCost
+
+                                ) }}
+
+                            </td>
+{% endif %}
+
+                        </tr>
+
+                        {% else %}
+
+                        <tr>
+
+                            <td
+
+                                colspan="{{ 5 if current_user.role in ['administrator', 'receptionist'] else 4 }}"
+
+                                class="text-center text-muted py-4"
+
+                            >
+
+                                No treatments recorded for this admission.
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                    {% if treatments and current_user.role in ["administrator", "receptionist"] %}
+
+                    <tfoot>
+
+                        <tr class="fw-bold">
+
+                            <td colspan="4" class="text-end">
+
+                                Total Treatment Cost
+
+                            </td>
+
+                            <td class="text-end">
+
+                                Rs.
+
+                                {{ "{:,.2f}".format(
+
+                                    total_treatment_cost
+
+                                ) }}
+
+                            </td>
+
+                        </tr>
+
+                    </tfoot>
+
+                    {% endif %}
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% if current_user.role in ["administrator", "receptionist"] %}
+<!-- Payment Summary -->
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+
+                        Total Billed
+
+                    </p>
+
+                    <h4 class="fw-bold mb-0">
+
+                        Rs. {{ "{:,.2f}".format(total_billed) }}
+
+                    </h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+
+                        Amount Paid
+
+                    </p>
+
+                    <h4 class="fw-bold mb-0">
+
+                        Rs. {{ "{:,.2f}".format(total_paid) }}
+
+                    </h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+
+                        Outstanding Balance
+
+                    </p>
+
+                    <h4 class="fw-bold mb-0">
+
+                        Rs. {{ "{:,.2f}".format(outstanding_balance) }}
+
+                    </h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+<!-- Payment History -->
+
+<div class="card shadow-sm border-0">
+
+    <div class="card-header bg-white border-0 pt-4 px-4">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <div>
+
+                <h5 class="fw-bold mb-1">
+
+                    Payment History
+
+                </h5>
+
+                <p class="text-muted mb-0">
+
+                    Billing and payment records for this admission.
+
+                </p>
+
+            </div>
+
+            <a
+
+                href="{{ url_for(
+
+                    'main.add_payment',
+
+                    admission_id=admission.AdmissionID
+
+                ) }}"
+
+                class="btn btn-sm btn-dark"
+
+            >
+
+                <i class="bi bi-plus-circle"></i>
+
+                Add Payment
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="card-body px-4">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Payment ID</th>
+
+                        <th>Date</th>
+
+                        <th>Total Amount</th>
+
+                        <th>Amount Paid</th>
+
+                        <th>Method</th>
+
+                        <th>Status</th>
+
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for payment in payments %}
+
+                    <tr>
+
+                        <!-- Payment ID -->
+
+                        <td>
+
+                            #{{ payment.PaymentID }}
+
+                        </td>
+
+                        <!-- Date -->
+
+                        <td>
+
+                            {{ payment.PaymentDate }}
+
+                        </td>
+
+                        <!-- Total Amount -->
+
+                        <td>
+
+                            Rs. {{ "{:,.2f}".format(payment.TotalAmount) }}
+
+                        </td>
+
+                        <!-- Amount Paid -->
+
+                        <td>
+
+                            Rs. {{ "{:,.2f}".format(payment.AmountPaid) }}
+
+                        </td>
+
+                        <!-- Payment Method -->
+
+                        <td>
+
+                            {{ payment.PaymentMethod or "—" }}
+
+                        </td>
+
+                        <!-- Payment Status -->
+
+                        <td>
+
+                            {% if payment.PaymentStatus == "Paid" %}
+
+                                <span class="badge bg-success">
+
+                                    Paid
+
+                                </span>
+
+                            {% elif payment.PaymentStatus == "Partial" %}
+
+                                <span class="badge bg-warning text-dark">
+
+                                    Partial
+
+                                </span>
+
+                            {% elif payment.PaymentStatus == "Pending" %}
+
+                                <span class="badge bg-danger">
+
+                                    Pending
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-secondary">
+
+                                    {{ payment.PaymentStatus }}
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <!-- Action -->
+
+                        <td>
+
+                            {% if payment.AmountPaid < payment.TotalAmount %}
+
+                                <a
+
+                                    href="{{ url_for(
+
+                                        'main.record_payment',
+
+                                        payment_id=payment.PaymentID
+
+                                    ) }}"
+
+                                    class="btn btn-sm btn-outline-success"
+
+                                >
+
+                                    <i class="bi bi-cash-coin"></i>
+
+                                    Pay Balance
+
+                                </a>
+
+                            {% else %}
+
+                                <span class="text-success">
+
+                                    <i class="bi bi-check-circle"></i>
+
+                                    Complete
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+
+                        <td
+
+                            colspan="7"
+
+                            class="text-center text-muted py-4"
+
+                        >
+
+                            No payment records found for this admission.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+{% endif %} {# End billing visibility restriction #}
+
+{% endblock %}
